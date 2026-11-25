@@ -1,40 +1,287 @@
-body{
-  margin:0;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #ffd6e8, #ffeef5);
+/* A valentine card for Aya.
+   Motion: chrome uses 150/200/300ms, ease-out to enter, ease-in to exit, transform + opacity only.
+   Optical exception: the celebration (heart line + falling petals) is the one orchestrated
+   moment; it runs once on "Yes" and never loops. */
+
+:root {
+  --cherry: #8f0e2a;
+  --cherry-hi: #a3132f;
+  --wine: #5c0618;
+  --blush: #ffd9df;
+  --petal: #ff8fa3;
+  --paper: #fff4f2;
+  --gold: #f2c14e;
+
+  --m150: 150ms;
+  --m200: 200ms;
+  --m300: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+
+  --gutter: max(6vw, 20px);
 }
 
-.card{
-  background:white;
-  width:min(520px, 90%);
-  padding:40px;
-  border-radius:16px;
-  text-align:center;
-  box-shadow:0 10px 25px rgba(0,0,0,0.12);
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  color: var(--blush);
+  background: radial-gradient(120% 90% at 28% 42%, var(--cherry-hi) 0%, var(--cherry) 48%, var(--wine) 100%) fixed, var(--cherry);
+  font: 500 17px/1.5 "Instrument Sans", system-ui, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1{
-  margin:0 0 28px 0;
+.stage {
+  position: relative;
+  min-height: 100%;
+  display: grid;
+  align-items: center;
+  padding: max(32px, env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
 }
 
-.buttons button{
-  padding:12px 30px;
-  font-size:18px;
-  border:none;
-  border-radius:10px;
-  margin:10px;
-  cursor:pointer;
+/* Her name in Ruqaa calligraphy, a watermark behind the question */
+.ghost {
+  position: absolute;
+  right: 3vw;
+  top: 50%;
+  transform: translateY(-56%);
+  font-family: "Aref Ruqaa", serif;
+  font-weight: 700;
+  font-size: clamp(200px, 36vw, 520px);
+  line-height: 1;
+  color: var(--paper);
+  opacity: 0.07;
+  pointer-events: none;
+  user-select: none;
 }
 
-#yesBtn{
-  background:#ff4d6d;
-  color:white;
+.ask {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  transition: opacity var(--m150) var(--ease-in);
 }
 
-#noBtn{
-  background:#e0e0e0;
+h1 { margin: 0; font-weight: 400; }
+
+.name {
+  display: block;
+  font-family: "Gloock", Georgia, serif;
+  font-size: clamp(76px, 15vw, 210px);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+}
+
+.q {
+  display: block;
+  margin-top: 0.22em;
+  max-width: 9.5em;
+  font-family: "Gloock", Georgia, serif;
+  font-size: clamp(36px, 6.4vw, 88px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--blush);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(32px, 4.5vw, 56px);
+}
+
+button,
+.letter {
+  font: 600 18px/1 "Instrument Sans", system-ui, sans-serif;
+  border: 0;
+  border-radius: 999px;
+  padding: 18px 36px;
+  min-height: 56px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+.letter:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+}
+
+#yesBtn {
+  background: var(--paper);
+  color: var(--cherry);
+  transform: scale(var(--grow, 1));
+  transform-origin: left center;
+  transition: transform var(--m200) var(--ease-out), background-color var(--m150) var(--ease-out);
+}
+
+#yesBtn:hover { background: #fff; }
+#yesBtn:active { transform: scale(calc(var(--grow, 1) * 0.97)); }
+
+#noBtn {
+  position: relative;
+  z-index: 5;
+  background: transparent;
+  color: var(--blush);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 217, 223, 0.55);
+  white-space: nowrap;
+  transition: transform var(--m200) var(--ease-out), opacity var(--m200) var(--ease-in);
+}
+
+.note {
+  margin: 22px 0 0;
+  font-size: 16px;
+  color: var(--blush);
+  opacity: 0.85;
+}
+
+/* One page-load sequence */
+.rise {
+  opacity: 0;
+  animation: rise var(--m300) var(--ease-out) forwards;
+}
+.q.rise { animation-delay: var(--m150); }
+.buttons.rise { animation-delay: var(--m300); }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- After "Yes" ---------- */
+.yes-view {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px var(--gutter);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.yes-view[hidden] { display: none; }
+
+body.said-yes .ask,
+body.said-yes .ghost {
+  opacity: 0;
+  pointer-events: none;
+}
+body.said-yes .ghost { transition: opacity var(--m150) var(--ease-in); }
+
+.heart {
+  width: clamp(120px, 20vw, 190px);
+  height: auto;
+  overflow: visible;
+  margin-bottom: 6px;
+}
+
+.heart-line {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.2s var(--ease-out) var(--m150) forwards;
+}
+
+.heart-fill {
+  fill: var(--petal);
+  opacity: 0;
+  animation: show var(--m300) var(--ease-out) 1.2s forwards;
+}
+
+.ar-line {
+  margin: 0;
+  font-family: "Aref Ruqaa", serif;
+  font-weight: 700;
+  font-size: clamp(42px, 7.5vw, 92px);
+  line-height: 1.25;
+  color: var(--gold);
+}
+
+.yes-title {
+  margin: 0;
+  font-family: "Gloock", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 76px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  outline: none;
+}
+
+.yes-text {
+  margin: 4px 0 14px;
+  font-size: clamp(18px, 2vw, 21px);
+  color: var(--blush);
+}
+
+.letter {
+  display: inline-flex;
+  align-items: center;
+  background: var(--paper);
+  color: var(--cherry);
+  text-decoration: none;
+  transition: background-color var(--m150) var(--ease-out);
+}
+.letter:hover { background: #fff; }
+
+.step {
+  opacity: 0;
+  animation: rise var(--m300) var(--ease-out) forwards;
+}
+.ar-line.step { animation-delay: 1.35s; }
+.yes-title.step { animation-delay: 1.5s; }
+.yes-text.step { animation-delay: 1.65s; }
+.letter.step { animation-delay: 1.8s; }
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes show { to { opacity: 1; } }
+
+/* Petals: fall once, then removed by script */
+.petal {
+  position: fixed;
+  top: -6vh;
+  left: var(--x);
+  z-index: 3;
+  width: var(--s);
+  height: var(--s);
+  background: var(--c);
+  border-radius: 150% 0 150% 0;
+  opacity: 0;
+  pointer-events: none;
+  animation: fall var(--dur) linear var(--delay) 1 forwards;
+}
+
+@keyframes fall {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  8% { opacity: 0.95; }
+  100% { opacity: 0.85; transform: translate(var(--dx), 116vh) rotate(var(--rot)); }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 640px) {
+  .stage { align-items: end; padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+  .ghost { top: 12%; right: 50%; transform: translateX(50%); font-size: 62vw; }
+  .buttons { gap: 12px; }
+  button { padding: 16px 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .step, .heart-fill { animation: none; opacity: 1; }
+  .heart-line { animation: none; stroke-dashoffset: 0; }
+  #yesBtn, #noBtn, .ask, .ghost { transition: none; }
+  .petal { display: none; }
 }
