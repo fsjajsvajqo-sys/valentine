@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121a36">
+  <meta name="description" content="A sealed letter for Aya.">
+  <title>A letter for Aya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Katibeh&family=Pinyon+Script&display=swap" rel="stylesheet">
+  <style>
+    /* A sealed letter by candlelight.
+       Motion: one orchestrated opening (seal, flap, letter) built from 300ms steps,
+       ease-out, transform + opacity only. Nothing moves while she reads. */
+    :root {
+      --night: #121a36; --night-hi: #1d2a55; --candle: #f6c27a;
+      --paper: #fbf5ea; --paper-shade: #f1e6d1; --env: #ecdfc6; --env-dark: #e1d0b0;
+      --ink: #2a2f4a; --ink-soft: #5a5f7a; --wax: #9b1b30; --wax-hi: #c23a4f; --gold: #e9c98a; --muted: #a9b1d6;
+      --m200: 200ms; --m300: 300ms;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; min-width: 0; }
+    [hidden] { display: none !important; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0; color: var(--ink);
+      background: radial-gradient(60% 50% at 50% 38%, rgba(246, 194, 122, 0.16), transparent 70%), radial-gradient(120% 100% at 50% 0%, var(--night-hi), var(--night) 70%) fixed, var(--night);
+      font: 400 20px/1.75 "EB Garamond", Georgia, serif; -webkit-font-smoothing: antialiased; overflow-x: clip;
+    }
+
+    /* Closed envelope */
+    .stage { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: max(32px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); text-align: center; transition: opacity var(--m200) ease-in; }
+    .stage.leaving { opacity: 0; }
+    .stage h1 { margin: 0; font-family: "Pinyon Script", cursive; font-weight: 400; font-size: clamp(48px, 8vw, 84px); line-height: 1; color: var(--gold); }
+    .stage .hint { margin: 0; font-style: italic; font-size: 19px; color: var(--muted); }
+
+    .env { position: relative; width: min(560px, 88vw); aspect-ratio: 3 / 2; perspective: 1400px; }
+    .env-back { position: absolute; inset: 0; z-index: 0; border-radius: 10px; background: var(--env-dark); box-shadow: 0 34px 70px -24px rgba(0, 0, 0, 0.7), 0 0 120px rgba(246, 194, 122, 0.12); }
+    .peek { position: absolute; z-index: 2; left: 6%; right: 6%; top: 7%; height: 82%; border-radius: 6px; background: var(--paper); padding: 7% 8%; text-align: left; transition: transform var(--m300) var(--ease-out); }
+    .peek span { font-family: "Pinyon Script", cursive; font-size: clamp(26px, 5vw, 40px); color: var(--ink); }
+    .peek i { display: block; margin-top: 6px; height: 2px; width: 70%; background: var(--paper-shade); box-shadow: 0 16px 0 var(--paper-shade), 0 32px 0 var(--paper-shade); }
+    .env-front { position: absolute; inset: 0; z-index: 3; border-radius: 10px; background: linear-gradient(170deg, var(--env), #e6d6b9); clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%); }
+    .flap { position: absolute; z-index: 4; left: 0; right: 0; top: 0; height: 60%; background: linear-gradient(180deg, #f2e7d2, var(--env-dark)); clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top center; transition: transform var(--m300) var(--ease-out); border-radius: 10px 10px 0 0; }
+    .seal { position: absolute; z-index: 5; left: 50%; top: 60%; width: 76px; height: 76px; transform: translate(-50%, -50%); border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 35% 30%, var(--wax-hi), var(--wax) 60%, #6e1022); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), inset 0 0 0 5px rgba(0, 0, 0, 0.12); color: var(--gold); font: 400 40px/1 "Pinyon Script", cursive; display: grid; place-items: center; transition: transform var(--m200) var(--ease-out), opacity var(--m200) ease-in; }
+    .seal:hover { transform: translate(-50%, -50%) scale(1.06); }
+    .seal:focus-visible { outline: 3px solid var(--gold); outline-offset: 5px; }
+
+    .env.open .seal { opacity: 0; transform: translate(-50%, -50%) scale(0.6); pointer-events: none; }
+    .env.open .flap { transform: rotateX(180deg); z-index: 1; }
+    .env.out .peek { transform: translateY(-58%); }
+
+    /* The letter */
+    .reading { padding: max(48px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(56px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+    .reading[hidden] { display: none; }
+    .paper { max-width: 720px; margin: 0 auto; background: var(--paper); border-radius: 6px; padding: clamp(36px, 7vw, 76px) clamp(24px, 7vw, 80px); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7), 0 0 140px rgba(246, 194, 122, 0.1); animation: arrive var(--m300) var(--ease-out); }
+    @keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .date { margin: 0 0 18px; text-align: right; font-style: italic; font-size: 17px; color: var(--ink-soft); }
+    .salute { outline: none; margin: 0 0 22px; font-family: "Pinyon Script", cursive; font-weight: 400; font-size: clamp(48px, 8vw, 72px); line-height: 1; color: var(--ink); }
+    .paper p { margin: 0 0 1.15em; }
+    .paper p.lead::first-letter { font-family: "Pinyon Script", cursive; font-size: 2.6em; float: left; line-height: 0.85; padding: 6px 10px 0 0; color: var(--wax); }
+    .ar { margin: 30px 0; text-align: center; font-family: "Katibeh", serif; font-size: clamp(34px, 6vw, 48px); line-height: 1.4; color: var(--wax); direction: rtl; }
+    .close-line { font-style: italic; }
+    .sign { display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin-top: 36px; }
+    .sign div { text-align: right; }
+    .sign small { display: block; font-style: italic; font-size: 17px; color: var(--ink-soft); }
+    .sign b { display: block; font-family: "Pinyon Script", cursive; font-weight: 400; font-size: clamp(36px, 6vw, 48px); line-height: 1.1; color: var(--ink); }
+    .mini-seal { flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, var(--wax-hi), var(--wax) 60%, #6e1022); color: var(--gold); font: 400 30px/1 "Pinyon Script", cursive; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), inset 0 0 0 4px rgba(0, 0, 0, 0.12); }
+    .links { max-width: 720px; margin: 28px auto 0; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 18px; }
+    .links a { color: var(--gold); }
+    .links a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stage, .peek, .flap, .seal { transition: none; }
+      .paper { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="stage" id="stage">
+    <h1>For you, Aya</h1>
+    <div class="env" id="env">
+      <div class="env-back"></div>
+      <div class="peek" aria-hidden="true"><span>My Aya,</span><i></i></div>
+      <div class="env-front"></div>
+      <div class="flap"></div>
+      <button class="seal" id="seal" type="button" aria-label="Break the seal and open your letter">A</button>
+    </div>
+    <p class="hint">Break the seal to open your letter.</p>
+  </section>
+
+  <main class="reading" id="reading" hidden>
+    <article class="paper">
+      <p class="date">Valentine's Day, 2027</p>
+      <h1 class="salute" id="salute" tabindex="-1">My Aya,</h1>
+
+      <p class="lead">Two years ago my life quietly changed direction, and I didn't even know it yet. I only knew that every road I took somehow started leading back to you.</p>
+
+      <p>They say your name means a sign. I believe it with my whole heart, because you are the clearest sign I have ever been given: that God was kind to me, that love is real, and that it has your face.</p>
+
+      <p>I love you in ways I still can't find the words for. I love your laugh, the real one, the one that makes me forget whatever was worrying me. I love the way you care for the people you love with everything you have. I love that when the whole world is loud, your voice is the only one I'm listening for.</p>
+
+      <p>And this year, I don't want to just tell you that I love you. I want to build it. A home with both our names on the door. Mornings where the first thing I see is you, and nights where I never have to say goodbye to you again. And one day, a family of our own, with your heart and your smile in every one of them.</p>
+
+      <p>Until then, and long after, here is my promise. I will choose you every single day. On the easy days and on the hard ones. When we are young and when we are grey. I will hold your hand in every room we ever live in, and I will never stop being grateful that it's yours I get to hold.</p>
+
+      <p class="ar" lang="ar">أحبّكِ أكثر مما تقوله الكلمات، وأكثر مما يتّسع له العمر</p>
+
+      <p>You are my home before we even have one. You are my answered prayer. You are my sign, my love, my whole life.</p>
+
+      <p class="close-line">Happy Valentine's Day, my love. Here's to our two years, and to every year after.</p>
+
+      <div class="sign">
+        <div><small>Yours, today and every day after,</small><b>Your husband</b></div>
+        <span class="mini-seal" aria-hidden="true">A</span>
+      </div>
+    </article>
+    <nav class="links" aria-label="More for you">
+      <a href="../">Back to our stars</a>
+      <a href="../../">All our Valentines</a>
+    </nav>
+  </main>
+
+  <script>
+  {
+    const env = document.getElementById("env");
+    const stage = document.getElementById("stage");
+    const reading = document.getElementById("reading");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function showLetter() {
+      stage.hidden = true;
+      reading.hidden = false;
+      window.scrollTo(0, 0);
+      document.getElementById("salute").focus({ preventScroll: true });
+    }
+
+    function openLetter() {
+      if (reduce) { showLetter(); return; }
+      env.classList.add("open");
+      setTimeout(() => env.classList.add("out"), 300);
+      setTimeout(() => stage.classList.add("leaving"), 750);
+      setTimeout(showLetter, 950);
+    }
+
+    document.getElementById("seal").addEventListener("click", openLetter);
+    if (location.hash === "#open") showLetter();
+  }
+  </script>
+</body>
+</html>
