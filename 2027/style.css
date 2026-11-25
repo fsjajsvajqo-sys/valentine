@@ -1,0 +1,288 @@
+/* 2027: twelve stars for twelve months.
+   Motion: 150/200/300ms, ease-out to enter, ease-in to exit, transform + opacity only.
+   The only loop is the glow on the next star to tap: it shows where to go, so it is functional. */
+
+:root {
+  --night: #0b1530;
+  --night-hi: #1a2a5c;
+  --deep: #060c1f;
+  --star: #ffe2a3;
+  --moon: #f5eedf;
+  --rose: #ff9db0;
+  --ink: #e9e4f5;
+  --muted: #a9b1d6;
+
+  --m150: 150ms;
+  --m200: 200ms;
+  --m300: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+
+  --gutter: max(6vw, 20px);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: radial-gradient(130% 100% at 70% 30%, var(--night-hi) 0%, var(--night) 45%, var(--deep) 100%) fixed, var(--night);
+  font: 400 17px/1.6 "Figtree", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#sky {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Year switch */
+.years {
+  position: fixed;
+  z-index: 10;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(6, 12, 31, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(233, 228, 245, 0.2);
+}
+.years a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font: 600 14px/1 "Figtree", system-ui, sans-serif;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color var(--m150) var(--ease-out);
+}
+.years a:hover { background: rgba(233, 228, 245, 0.1); }
+.years a[aria-current="page"] { background: var(--star); color: var(--night); }
+.years a:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
+
+.layout {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: max(80px, env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(var(--gutter), env(safe-area-inset-left));
+  transition: opacity var(--m200) var(--ease-in);
+}
+
+.ar-name {
+  margin: 0;
+  font-family: "Reem Kufi", sans-serif;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 1.2;
+  color: var(--star);
+  text-align: left;
+}
+
+h1 {
+  margin: 8px 0 0;
+  font-family: "Italiana", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--moon);
+}
+
+.lede {
+  margin: 18px 0 0;
+  max-width: 34em;
+  color: var(--muted);
+}
+
+.promise {
+  margin-top: 32px;
+  padding: 24px 24px 20px;
+  border-radius: 20px;
+  background: rgba(6, 12, 31, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 226, 163, 0.18);
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+}
+
+.month {
+  margin: 0;
+  font-family: "Italiana", Georgia, serif;
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--star);
+}
+
+.text {
+  margin: 10px 0 18px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink);
+  flex: 1;
+}
+
+.month.swap, .text.swap { animation: swap var(--m300) var(--ease-out); }
+@keyframes swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.progress {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(233, 228, 245, 0.12);
+  overflow: hidden;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--star), var(--rose));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--m300) var(--ease-out);
+}
+
+.count {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* The heart of stars */
+.constellation {
+  position: relative;
+  aspect-ratio: 42 / 39;
+  justify-self: stretch;
+  width: 100%;
+  max-width: min(100%, calc((100svh - 140px) * 42 / 39));
+  margin-inline: auto;
+}
+.panel { min-width: 0; transition: opacity var(--m200) var(--ease-in); }
+body.finale-open .panel { opacity: 0; }
+body.finale-open .constellation { opacity: 0.55; transition: opacity var(--m300) var(--ease-out); }
+#heart { width: 100%; height: 100%; overflow: visible; }
+
+.link {
+  fill: none;
+  stroke: var(--star);
+  stroke-width: 0.22;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.85;
+  animation: draw var(--m300) var(--ease-out) forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.star { cursor: default; outline: none; }
+.star .halo { fill: var(--star); opacity: 0; transition: opacity var(--m300) var(--ease-out); }
+.star .core { fill: var(--muted); opacity: 0.55; transition: opacity var(--m200) var(--ease-out); }
+.star .hit { fill: transparent; }
+.star .label {
+  font: 600 1.15px "Figtree", sans-serif;
+  fill: var(--muted);
+  text-anchor: middle;
+  opacity: 0;
+  transition: opacity var(--m300) var(--ease-out);
+}
+
+.star.next { cursor: pointer; }
+.star.next .core { fill: var(--moon); opacity: 1; }
+.star.next .halo { opacity: 0.35; animation: beckon 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes beckon { 0%, 100% { transform: scale(1); opacity: 0.25; } 50% { transform: scale(1.5); opacity: 0.5; } }
+.star.next:focus-visible .halo { opacity: 0.7; }
+
+.star.done .core { fill: var(--star); opacity: 1; }
+.star.done .halo { opacity: 0.22; }
+.star.done .label { opacity: 1; fill: var(--star); }
+
+body.complete .link { stroke: var(--rose); transition: stroke var(--m300) var(--ease-out); }
+body.complete .star.done .core { fill: var(--rose); }
+
+/* Finale */
+.finale {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px var(--gutter) 40px;
+  text-align: center;
+  background: radial-gradient(60% 50% at 50% 45%, rgba(26, 42, 92, 0.75), rgba(6, 12, 31, 0.9));
+  animation: fade var(--m300) var(--ease-out);
+  overflow-y: auto;
+}
+.finale[hidden] { display: none; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+.ar-big {
+  margin: 0;
+  font-family: "Reem Kufi", sans-serif;
+  font-weight: 700;
+  font-size: clamp(56px, 10vw, 120px);
+  line-height: 1.2;
+  color: var(--star);
+}
+.finale h2 {
+  margin: 0;
+  font-family: "Italiana", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(44px, 6.5vw, 84px);
+  line-height: 1;
+  color: var(--moon);
+  outline: none;
+}
+.finale-text { margin: 6px 0 18px; max-width: 32em; font-size: 19px; color: var(--ink); }
+.finale > * { opacity: 0; animation: rise var(--m300) var(--ease-out) forwards; }
+.finale > :nth-child(1) { animation-delay: var(--m150); }
+.finale > :nth-child(2) { animation-delay: var(--m300); }
+.finale > :nth-child(3) { animation-delay: 450ms; }
+.finale > :nth-child(4) { animation-delay: 600ms; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.finale-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 26px;
+  border-radius: 999px;
+  border: 0;
+  font: 600 17px/1 "Figtree", system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--m150) var(--ease-out);
+}
+.btn.primary { background: var(--star); color: var(--night); }
+.btn.primary:hover { background: #ffeac0; }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px rgba(233, 228, 245, 0.4); }
+.btn.ghost:hover { background: rgba(233, 228, 245, 0.08); }
+.btn:focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+
+/* Phones and narrow windows: heart first, then the promise */
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); align-items: start; gap: 8px; padding-top: max(72px, env(safe-area-inset-top)); }
+  .constellation { order: -1; max-width: min(100%, 460px); }
+  .ar-name { font-size: 34px; }
+  .promise { margin-top: 22px; min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link { animation: none; stroke-dashoffset: 0; }
+  .star.next .halo { animation: none; opacity: 0.5; }
+  .month.swap, .text.swap, .finale, .finale > * { animation: none; opacity: 1; }
+  .progress span, .layout { transition: none; }
+}

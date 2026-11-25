@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#8f0e2a">
+  <meta name="description" content="A question for Aya.">
+  <title>Aya, will you be my Valentine?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Gloock&family=Instrument+Sans:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="years" aria-label="Choose a year">
+    <a href="../2026/" aria-current="page">2026</a>
+    <a href="../2027/">2027</a>
+  </nav>
+
+  <main class="stage">
+    <span class="ghost" lang="ar" dir="rtl" aria-hidden="true">آية</span>
+
+    <section class="ask" aria-labelledby="question">
+      <h1 id="question">
+        <span class="name rise">Aya,</span>
+        <span class="q rise">will you be my Valentine?</span>
+      </h1>
+
+      <div class="buttons rise">
+        <button id="yesBtn" type="button">Yes</button>
+        <button id="noBtn" type="button">No</button>
+      </div>
+      <p class="note" id="note" hidden>The no button gave up. There's only one answer now.</p>
+    </section>
+
+    <section class="yes-view" id="yesView" aria-live="polite" hidden>
+      <svg class="heart" viewBox="0 0 120 108" aria-hidden="true">
+        <path class="heart-fill" d="M60 100 C 20 72, 4 52, 4 32 C 4 16, 16 4, 31 4 C 44 4, 54 12, 60 24 C 66 12, 76 4, 89 4 C 104 4, 116 16, 116 32 C 116 52, 100 72, 60 100 Z"/>
+        <path class="heart-line" pathLength="1" d="M60 100 C 20 72, 4 52, 4 32 C 4 16, 16 4, 31 4 C 44 4, 54 12, 60 24 C 66 12, 76 4, 89 4 C 104 4, 116 16, 116 32 C 116 52, 100 72, 60 100 Z"/>
+      </svg>
+      <p class="ar-line step" lang="ar" dir="rtl">كل عام وأنتِ حبيبتي</p>
+      <h2 class="yes-title step" id="yesTitle" tabindex="-1">Best answer ever.</h2>
+      <p class="yes-text step">I love you, Aya. Happy Valentine's Day.</p>
+      <a class="letter step" href="https://claude.ai/artifact/13QTjyZAifTk2V3XpTDq3W">Read the letter I wrote you</a>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

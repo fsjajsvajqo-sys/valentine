@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1530">
+  <meta name="description" content="Twelve stars for Aya.">
+  <title>Aya, twelve stars for 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Italiana&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="years" aria-label="Choose a year">
+    <a href="../2026/">2026</a>
+    <a href="../2027/" aria-current="page">2027</a>
+  </nav>
+
+  <canvas id="sky" aria-hidden="true"></canvas>
+
+  <main class="layout">
+    <section class="panel" id="panel">
+      <p class="ar-name" lang="ar" dir="rtl">آية</p>
+      <h1>Two years of us. Twelve stars for 2027.</h1>
+      <p class="lede">Two years together, and I love you more with every month. So for 2027 I wrote you a promise for each one. Tap the glowing star to read the next.</p>
+
+      <div class="promise" aria-live="polite">
+        <p class="month" id="month">Your stars are waiting</p>
+        <p class="text" id="promise">Start with the brightest star in the heart.</p>
+        <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+        <p class="count" id="count">0 of 12 stars</p>
+      </div>
+    </section>
+
+    <section class="constellation">
+      <svg id="heart" viewBox="-21 -19 42 39" role="group" aria-label="A heart made of twelve stars">
+        <g id="lines"></g>
+        <g id="stars"></g>
+      </svg>
+    </section>
+  </main>
+
+  <section class="finale" id="finale" hidden aria-live="polite">
+    <p class="ar-big" lang="ar" dir="rtl">أنتِ آيتي</p>
+    <h2 id="finaleTitle" tabindex="-1">You are my sign.</h2>
+    <p class="finale-text">Two years of us, twelve promises, one heart, and all of it yours. Happy Valentine's Day, Aya.</p>
+    <div class="finale-actions">
+      <a class="btn primary" href="https://claude.ai/artifact/13QTjyZAifTk2V3XpTDq3W">Read my letter to you</a>
+      <button class="btn ghost" type="button" id="again">See the stars again</button>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

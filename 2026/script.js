@@ -49,11 +49,12 @@ function dodge(event) {
   const maxY = window.innerHeight - rect.height - margin;
   const yes = yesBtn.getBoundingClientRect();
 
+  const top = 76; // stay below the year switch
   let x = margin;
-  let y = margin;
+  let y = top;
   for (let i = 0; i < 30; i += 1) {
     x = margin + Math.random() * Math.max(0, maxX - margin);
-    y = margin + Math.random() * Math.max(0, maxY - margin);
+    y = top + Math.random() * Math.max(0, maxY - top);
     const overlapsYes =
       x < yes.right + 24 && x + rect.width > yes.left - 24 &&
       y < yes.bottom + 24 && y + rect.height > yes.top - 24;

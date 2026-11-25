@@ -271,6 +271,31 @@ body.said-yes .ghost { transition: opacity var(--m150) var(--ease-in); }
   100% { opacity: 0.85; transform: translate(var(--dx), 116vh) rotate(var(--rot)); }
 }
 
+/* Year switch */
+.years {
+  position: fixed;
+  z-index: 10;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(92, 6, 24, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 217, 223, 0.25);
+}
+.years a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font: 600 14px/1 "Instrument Sans", system-ui, sans-serif;
+  color: var(--blush);
+  text-decoration: none;
+  transition: background-color var(--m150) var(--ease-out);
+}
+.years a:hover { background: rgba(255, 217, 223, 0.12); }
+.years a[aria-current="page"] { background: var(--paper); color: var(--cherry); }
+.years a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
 /* ---------- Phones ---------- */
 @media (max-width: 640px) {
   .stage { align-items: end; padding-bottom: max(48px, env(safe-area-inset-bottom)); }
