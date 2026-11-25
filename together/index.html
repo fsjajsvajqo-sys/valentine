@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#bfe3f5">
+  <meta name="description" content="Our life list, Aya: every dream we'll live together.">
+  <title>Aya, our life list</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Lalezar&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Our life list: a sunny road trip toward a house called Forever.
+       Motion: 150/200/300ms, transform + opacity, answers her taps. */
+    :root {
+      --sky: #bfe3f5; --sky-deep: #8ccbea; --hill: #9fd3a8; --hill-deep: #6fbf86;
+      --road: #3a3f47; --sun: #ffd23f; --ink: #1f2a44; --soft: #4b5878; --paper: #ffffff;
+      --mini: #d7263d; --heart: #ff4d6d;
+      --m150: 150ms; --m200: 200ms; --m300: 300ms;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --gutter: max(5vw, 18px);
+    }
+    * { box-sizing: border-box; min-width: 0; }
+    body { margin: 0; color: var(--ink); background: var(--sky); font: 400 17px/1.55 "Outfit", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
+
+    .top { padding-top: max(36px, env(safe-area-inset-top)); padding-bottom: 8px; }
+    .top .wrap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: end; }
+    .ar { margin: 0; font-family: "Lalezar", sans-serif; font-size: 36px; line-height: 1.2; color: var(--heart); direction: rtl; text-align: left; }
+    h1 { margin: 2px 0 0; font-family: "Caprasimo", Georgia, serif; font-weight: 400; font-size: clamp(46px, 7vw, 88px); line-height: 0.98; letter-spacing: -0.01em; color: var(--ink); }
+    .lede { margin: 14px 0 0; max-width: 34em; color: var(--soft); font-size: 18px; }
+
+    .picker { justify-self: end; background: rgba(255, 255, 255, 0.7); border-radius: 22px; padding: 16px 18px; }
+    .picker p { margin: 0 0 10px; font-weight: 600; font-size: 15px; }
+    .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+    .swatch { width: 40px; height: 40px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px rgba(31, 42, 68, 0.15); cursor: pointer; padding: 0; transition: transform var(--m150) var(--ease-out); }
+    .swatch:hover { transform: scale(1.08); }
+    .swatch[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--ink); }
+    .swatch:focus-visible { outline: 3px solid var(--heart); outline-offset: 3px; }
+
+    .scene { display: block; width: 100%; height: auto; margin-top: 12px; }
+    #car { transition: transform var(--m300) var(--ease-out); }
+    .wheel-spin { transform-box: fill-box; transform-origin: center; }
+    #car.moving .wheel-spin { animation: spin var(--m300) linear; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .glow { opacity: 0; transition: opacity var(--m300) var(--ease-out); }
+    body.forever .glow { opacity: 1; }
+    .bigheart { opacity: 0; transform: scale(0.6); transform-box: fill-box; transform-origin: center; transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    body.forever .bigheart { opacity: 1; transform: none; }
+
+    .listband { background: var(--paper); padding-block: clamp(32px, 5vw, 64px) clamp(40px, 6vw, 80px); }
+    .listhead { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+    h2 { margin: 0; font-family: "Caprasimo", Georgia, serif; font-weight: 400; font-size: clamp(32px, 4vw, 46px); line-height: 1.05; }
+    .progress { font-weight: 600; color: var(--soft); white-space: nowrap; }
+    .items { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
+    .item { display: flex; gap: 16px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid #e6ecf4; cursor: pointer; }
+    .item input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .tick { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid #c7d2e3; display: grid; place-items: center; margin-top: 2px; transition: background-color var(--m200) var(--ease-out), border-color var(--m200) var(--ease-out); }
+    .tick svg { opacity: 0; transform: scale(0.6); transition: opacity var(--m200) var(--ease-out), transform var(--m200) var(--ease-out); }
+    .item input:checked + .tick { background: var(--heart); border-color: var(--heart); }
+    .item input:checked + .tick svg { opacity: 1; transform: none; }
+    .item input:focus-visible + .tick { outline: 3px solid var(--sun); outline-offset: 3px; }
+    .t b { display: block; font-size: 20px; font-weight: 600; line-height: 1.3; }
+    .t span { display: block; color: var(--soft); font-size: 16px; }
+    .item input:checked ~ .t b { color: var(--heart); }
+
+    .forever-note { margin: 34px 0 0; padding: 22px 26px; border-radius: 22px; background: #fff1f4; font-size: 19px; opacity: 0; transform: translateY(8px); transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    body.forever .forever-note { opacity: 1; transform: none; }
+    .forever-note strong { font-family: "Caprasimo", Georgia, serif; font-weight: 400; font-size: 26px; display: block; color: var(--heart); }
+
+    footer { background: var(--paper); padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+    footer a { color: var(--ink); font-weight: 600; }
+
+    @media (max-width: 760px) {
+      .top .wrap { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+      .picker { justify-self: start; }
+      .items { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #car, .glow, .bigheart, .forever-note, .tick, .tick svg, .swatch { transition: none; }
+      #car.moving .wheel-spin { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="wrap">
+      <div>
+        <p class="ar" lang="ar">حياتنا معاً</p>
+        <h1>Our life list, Aya</h1>
+        <p class="lede">Everything I want to give you, and every dream we'll live together. Tick each one as it comes true, and watch your Mini drive us home.</p>
+      </div>
+      <div class="picker">
+        <p>Pick the colour of your Mini</p>
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </div>
+  </header>
+
+  <svg class="scene" viewBox="0 140 1000 260" aria-label="Your Mini Cooper on the road to our house, Forever" role="img">
+    <defs>
+      <linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3f5"/><stop offset="1" stop-color="#e3f3fb"/></linearGradient>
+    </defs>
+    <rect y="140" width="1000" height="260" fill="url(#skyg)"/>
+    <circle cx="110" cy="200" r="32" fill="#ffd23f"/>
+    <circle cx="110" cy="200" r="46" fill="#ffd23f" opacity="0.25"/>
+    <g fill="#fff" opacity="0.95">
+      <ellipse cx="400" cy="190" rx="50" ry="16"/><ellipse cx="432" cy="180" rx="32" ry="18"/>
+      <ellipse cx="660" cy="214" rx="42" ry="13"/><ellipse cx="686" cy="206" rx="26" ry="15"/>
+    </g>
+    <path d="M0 250 C 160 190, 300 200, 450 235 C 600 270, 760 190, 1000 215 L1000 400 L0 400 Z" fill="#9fd3a8"/>
+    <path d="M0 290 C 200 250, 380 285, 560 275 C 740 265, 860 240, 1000 255 L1000 400 L0 400 Z" fill="#6fbf86"/>
+
+    <!-- House called Forever -->
+    <g transform="translate(830 196)">
+      <rect x="10" y="60" width="130" height="92" rx="4" fill="#fff6ec"/>
+      <path d="M0 64 L75 8 L150 64 Z" fill="#e85d75"/>
+      <rect x="104" y="18" width="16" height="30" fill="#c94a62"/>
+      <path class="bigheart" d="M112 4 C 106 -8, 92 -2, 98 8 L112 20 L126 8 C 132 -2, 118 -8, 112 4 Z" fill="#ff4d6d"/>
+      <rect x="62" y="98" width="28" height="54" rx="3" fill="#7a4b3a"/>
+      <rect x="22" y="84" width="28" height="26" rx="3" fill="#8ccbea"/>
+      <rect x="102" y="84" width="28" height="26" rx="3" fill="#8ccbea"/>
+      <rect class="glow" x="22" y="84" width="28" height="26" rx="3" fill="#ffd23f"/>
+      <rect class="glow" x="102" y="84" width="28" height="26" rx="3" fill="#ffd23f"/>
+      <rect x="38" y="38" width="74" height="22" rx="5" fill="#fff"/>
+      <text x="75" y="54" text-anchor="middle" font-family="Caprasimo, Georgia, serif" font-size="14" fill="#1f2a44">Forever</text>
+    </g>
+
+    <!-- Road -->
+    <rect x="0" y="352" width="1000" height="48" fill="#3a3f47"/>
+    <g fill="#ffd23f">
+      <rect x="20" y="374" width="44" height="5" rx="2"/><rect x="120" y="374" width="44" height="5" rx="2"/><rect x="220" y="374" width="44" height="5" rx="2"/><rect x="320" y="374" width="44" height="5" rx="2"/><rect x="420" y="374" width="44" height="5" rx="2"/><rect x="520" y="374" width="44" height="5" rx="2"/><rect x="620" y="374" width="44" height="5" rx="2"/><rect x="720" y="374" width="44" height="5" rx="2"/><rect x="820" y="374" width="44" height="5" rx="2"/><rect x="920" y="374" width="44" height="5" rx="2"/>
+    </g>
+
+    <!-- Her Mini Cooper -->
+    <g id="car" style="transform: translateX(20px)">
+      <g transform="translate(0 286)">
+        <ellipse cx="88" cy="70" rx="80" ry="6" fill="#000" opacity="0.18"/>
+        <path id="minibody" d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" fill="var(--mini)"/>
+        <path d="M54 19 Q57 9 67 9 L117 9 Q127 9 130 19 Z" fill="#fff"/>
+        <path d="M60 22 L84 22 L84 34 L49 34 Z" fill="#dff1fb"/>
+        <path d="M90 22 L123 22 L136 34 L90 34 Z" fill="#dff1fb"/>
+        <line x1="87" y1="22" x2="87" y2="60" stroke="#000" stroke-opacity="0.18" stroke-width="1.5"/>
+        <rect x="94" y="40" width="10" height="3" rx="1.5" fill="#fff" opacity="0.85"/>
+        <circle cx="160" cy="46" r="5" fill="#fff6c2"/>
+        <rect x="10" y="42" width="5" height="9" rx="2" fill="#ffb3a6"/>
+        <rect x="6" y="56" width="16" height="5" rx="2.5" fill="#d9dde4"/>
+        <rect x="152" y="56" width="18" height="5" rx="2.5" fill="#d9dde4"/>
+        <g class="wheel-spin"><circle cx="42" cy="66" r="14" fill="#23262c"/><circle cx="42" cy="66" r="6" fill="#d9dde4"/><path d="M42 54 V78 M30 66 H54" stroke="#9aa1ad" stroke-width="2"/></g>
+        <g class="wheel-spin"><circle cx="134" cy="66" r="14" fill="#23262c"/><circle cx="134" cy="66" r="6" fill="#d9dde4"/><path d="M134 54 V78 M122 66 H146" stroke="#9aa1ad" stroke-width="2"/></g>
+      </g>
+    </g>
+  </svg>
+
+  <main class="listband">
+    <div class="wrap">
+      <div class="listhead">
+        <h2>Our life together</h2>
+        <p class="progress" id="progress" aria-live="polite">0 of 8 dreams come true</p>
+      </div>
+      <ul class="items" id="items"></ul>
+      <p class="forever-note" id="note"><strong>Forever starts here.</strong>Every dream on this list, we lived it together. And we're only just getting started. I love you, Aya.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap"><a href="../">Back to Aya's Valentines</a></div>
+  </footer>
+
+  <script>
+  {
+    const dreams = [
+      ["Our own home", "Keys in your hand, our names on the door, and no more goodbyes at night."],
+      ["A new phone for you", "The newest one, in the colour you love, so I'm always one tap away."],
+      ["Your Mini Cooper", "In the colour you picked up there. You drive, I'll choose the songs."],
+      ["See the world together", "A new place every year, with your hand in mine."],
+      ["Our own family", "Little ones with your smile, your kindness, and our love in their hearts."],
+      ["Slow Sunday mornings", "Coffee, breakfast, and nowhere to be but next to you."],
+      ["Grow old together", "Still laughing at the same jokes, still holding hands."],
+      ["Happy and together, forever", "This one starts today, and it never ends."]
+    ];
+    const colours = [["Chili red", "#d7263d"], ["Pepper white", "#f2f2ef"], ["Midnight black", "#24262b"], ["Island blue", "#3a8fd1"], ["Mint", "#8fd6bd"], ["Blush pink", "#f4a6c0"]];
+
+    let saved = { ticks: [], colour: "#d7263d" };
+    try { saved = Object.assign(saved, JSON.parse(localStorage.getItem("aya-life-list") || "{}")); } catch (e) {}
+    const save = () => { try { localStorage.setItem("aya-life-list", JSON.stringify(saved)); } catch (e) {} };
+
+    const check = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const list = document.getElementById("items");
+    list.innerHTML = dreams.map(([t, d], k) =>
+      `<li><label class="item"><input type="checkbox" id="dream${k}" data-k="${k}"${saved.ticks.includes(k) ? " checked" : ""}><span class="tick">${check}</span><span class="t"><b>${t}</b><span>${d}</span></span></label></li>`
+    ).join("");
+
+    const car = document.getElementById("car");
+    const progress = document.getElementById("progress");
+    const startX = 20, endX = 660;
+
+    function update(animate) {
+      const done = [...list.querySelectorAll("input:checked")].map((i) => +i.dataset.k);
+      saved.ticks = done;
+      save();
+      const n = done.length;
+      progress.textContent = n === dreams.length ? "All 8 dreams came true" : `${n} of ${dreams.length} dreams come true`;
+      car.style.transform = `translateX(${startX + (endX - startX) * (n / dreams.length)}px)`;
+      if (animate) { car.classList.remove("moving"); void car.getBBox(); car.classList.add("moving"); }
+      document.body.classList.toggle("forever", n === dreams.length);
+    }
+    list.addEventListener("change", () => update(true));
+
+    const sw = document.getElementById("swatches");
+    sw.innerHTML = colours.map(([name, hex]) => `<button type="button" class="swatch" style="background:${hex}" aria-label="${name}" aria-pressed="${hex === saved.colour}" data-c="${hex}"></button>`).join("");
+    function paint(hex) {
+      document.documentElement.style.setProperty("--mini", hex);
+      sw.querySelectorAll(".swatch").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.c === hex)));
+      saved.colour = hex;
+      save();
+    }
+    sw.addEventListener("click", (e) => { const b = e.target.closest(".swatch"); if (b) paint(b.dataset.c); });
+
+    paint(saved.colour);
+    update(false);
+  }
+  </script>
+</body>
+</html>
