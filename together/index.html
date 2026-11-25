@@ -11,10 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=El+Messiri:wght@600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
   <style>
     /* New Year's Eve: driving home to 2027.
-       Motion: chrome 150/200/300ms, ease-out, transform + opacity.
-       Optical exception: the fireworks over our home run once, when every wish is ticked. */
+       Motion: controls use 150/200/300ms, ease-out, transform + opacity.
+       Optical exceptions, each tied to a story beat and never looping: the Mini driving in,
+       the two of us walking home, fireworks spelling AYA, and the first sunrise of 2027. */
     :root {
-      --plum: #2b1036; --plum-deep: #170820; --dusk: #4a1b4f; --rose: #f2a7a0;
+      --plum: #2b1036; --plum-deep: #170820; --rose: #f2a7a0;
       --champagne: #f6dfb0; --cream: #fff6ea; --soft: #cdb6c9; --line: rgba(246, 223, 176, 0.16);
       --mini: #d7263d;
       --m150: 150ms; --m200: 200ms; --m300: 300ms;
@@ -22,15 +23,16 @@
       --gutter: max(5vw, 18px);
     }
     * { box-sizing: border-box; min-width: 0; }
+    [hidden] { display: none !important; }
     body { margin: 0; color: var(--cream); background: var(--plum-deep); font: 400 17px/1.6 "Jost", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
     .wrap { max-width: 1160px; margin: 0 auto; padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
 
-    .top { background: var(--plum); padding-top: max(40px, env(safe-area-inset-top)); padding-bottom: 6px; }
+    .top { background: var(--plum); padding-top: max(36px, env(safe-area-inset-top)); padding-bottom: 4px; transition: background-color 2.5s ease-out; }
+    body.dawn .top { background: #3d1844; }
     .top .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; align-items: end; }
     .ar { margin: 0; font-family: "El Messiri", sans-serif; font-weight: 600; font-size: 32px; line-height: 1.3; color: var(--rose); direction: rtl; text-align: left; }
     h1 { margin: 4px 0 0; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: clamp(48px, 7.4vw, 96px); line-height: 0.98; letter-spacing: -0.02em; color: var(--champagne); }
     .lede { margin: 16px 0 0; max-width: 32em; font-size: 18px; color: var(--soft); }
-
     .count { justify-self: end; text-align: right; }
     .count-label { margin: 0 0 8px; font-size: 15px; color: var(--soft); }
     .digits { display: flex; gap: 18px; justify-content: flex-end; }
@@ -39,15 +41,36 @@
     .digits span { font-size: 13px; color: var(--soft); margin-top: 4px; }
     .newyear { margin: 0; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-size: clamp(26px, 3vw, 36px); color: var(--champagne); }
 
-    .scenewrap { position: relative; }
-    .scene { display: block; width: 100%; height: auto; }
+    .scenewrap { position: relative; overflow: hidden; }
+    #scene { display: block; width: 100%; }
     #fw { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
     #car { transition: transform var(--m300) var(--ease-out); }
+    #car.drive { transition: transform 1.3s var(--ease-out); }
     .wheel-spin { transform-box: fill-box; transform-origin: center; }
-    #car.moving .wheel-spin { animation: spin var(--m300) linear; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    #car.moving .wheel-spin { animation: spin var(--spin, 300ms) var(--ease-out); }
+    @keyframes spin { to { transform: rotate(720deg); } }
+    .beam { transition: opacity var(--m300) var(--ease-out); }
+    #car.parked .beam { opacity: 0; }
+
+    .lantern { opacity: 0.22; transition: opacity var(--m300) var(--ease-out); }
+    .lantern .icon { opacity: 0; transform: scale(0.5); transform-box: fill-box; transform-origin: center; transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    .lantern.lit { opacity: 1; }
+    .lantern.lit .icon { opacity: 1; transform: none; }
+
+    #walkers { transition: transform 1.6s linear, opacity var(--m300) var(--ease-out); opacity: 0; }
+    #walkers.show { opacity: 1; }
+
     .home-glow { opacity: 0.35; transition: opacity var(--m300) var(--ease-out); }
-    body.forever .home-glow { opacity: 0.9; }
+    body.forever .home-glow { opacity: 0.95; }
+    .dawn-sky { opacity: 0; transition: opacity 2.6s ease-out; }
+    body.dawn .dawn-sky { opacity: 1; }
+    .night-only { transition: opacity 2.2s ease-out; }
+    body.dawn .night-only { opacity: 0; }
+    #sun { transform: translateY(150px); transition: transform 2.8s var(--ease-out); }
+    body.dawn #sun { transform: none; }
+    #windows { transition: opacity 2.6s ease-out; }
+    body.dawn #windows { opacity: 0.35; }
 
     .strip { background: var(--plum-deep); border-bottom: 1px solid var(--line); }
     .strip .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 16px; }
@@ -75,14 +98,16 @@
     .t span { display: block; margin-top: 4px; color: var(--soft); font-size: 16px; }
     .item input:checked ~ .t b { color: var(--champagne); }
 
-    .note { margin: 36px 0 0; padding: 26px 28px; border-radius: 20px; background: linear-gradient(120deg, rgba(242, 167, 160, 0.16), rgba(246, 223, 176, 0.1)); box-shadow: inset 0 0 0 1px var(--line); font-size: 19px; opacity: 0; transform: translateY(8px); transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
-    body.forever .note { opacity: 1; transform: none; }
+    .note { margin: 36px 0 0; padding: 26px 28px; border-radius: 20px; background: linear-gradient(120deg, rgba(242, 167, 160, 0.18), rgba(246, 223, 176, 0.12)); box-shadow: inset 0 0 0 1px var(--line); font-size: 19px; opacity: 0; transform: translateY(8px); transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    body.dawn .note { opacity: 1; transform: none; }
     .note strong { display: block; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: 32px; line-height: 1.1; color: var(--champagne); margin-bottom: 6px; }
     .note .ar2 { display: block; margin-top: 10px; font-family: "El Messiri", sans-serif; font-weight: 600; font-size: 26px; color: var(--rose); direction: rtl; text-align: left; }
+    .replay { margin-top: 18px; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--champagne); color: var(--plum); font: 500 16px/1 "Jost", sans-serif; cursor: pointer; transition: background-color var(--m150) var(--ease-out); }
+    .replay:hover { background: #fff0cc; }
+    .replay:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
 
     footer { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
     footer a { color: var(--champagne); }
-    footer a:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
 
     @media (max-width: 760px) {
       .top .wrap { grid-template-columns: minmax(0, 1fr); gap: 22px; }
@@ -91,7 +116,7 @@
       .items { grid-template-columns: minmax(0, 1fr); }
     }
     @media (prefers-reduced-motion: reduce) {
-      #car, .home-glow, .note, .tick, .tick svg, .swatch { transition: none; }
+      #car, #car.drive, .beam, .lantern, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch { transition: none; }
       #car.moving .wheel-spin { animation: none; }
     }
   </style>
@@ -105,7 +130,7 @@
         <h1>Happy New Year, Aya</h1>
         <p class="lede">Another year with you is the only resolution I need. Here is everything I wish for us in 2027, and for the rest of our lives.</p>
       </div>
-      <div class="count" id="count" aria-live="off">
+      <div class="count" id="count">
         <p class="count-label">Until our 2027</p>
         <div class="digits">
           <div><b id="cd-d">00</b><span>days</span></div>
@@ -117,56 +142,42 @@
     </div>
   </header>
 
-  <div class="scenewrap">
-    <svg class="scene" viewBox="0 0 1000 300" role="img" aria-label="Your Mini Cooper driving through New Year's night toward our home">
+  <div class="scenewrap" id="wrap">
+    <svg id="scene" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Your Mini Cooper driving through New Year's night toward our home">
       <defs>
-        <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#2b1036"/><stop offset="0.62" stop-color="#4a1b4f"/><stop offset="1" stop-color="#b8606e"/>
-        </linearGradient>
+        <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1036"/><stop offset="0.62" stop-color="#4a1b4f"/><stop offset="1" stop-color="#b8606e"/></linearGradient>
+        <linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b2a6b"/><stop offset="0.5" stop-color="#e58f8c"/><stop offset="1" stop-color="#ffd59a"/></linearGradient>
         <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#f6dfb0" stop-opacity="0.55"/><stop offset="1" stop-color="#f6dfb0" stop-opacity="0"/></radialGradient>
-        <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff3cf" stop-opacity="0.55"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></linearGradient>
+        <radialGradient id="sunglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffe2a8" stop-opacity="0.8"/><stop offset="1" stop-color="#ffe2a8" stop-opacity="0"/></radialGradient>
+        <linearGradient id="beamg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff3cf" stop-opacity="0.55"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></linearGradient>
       </defs>
-      <rect width="1000" height="300" fill="url(#night)"/>
-      <g id="stars" fill="#fff6ea"></g>
-      <path d="M160 46 a26 26 0 1 0 22 40 a21 21 0 1 1 -22 -40 Z" fill="#f6dfb0"/>
-
-      <!-- Skyline -->
-      <g fill="#1f0b28">
-        <rect x="0" y="168" width="54" height="88"/><rect x="58" y="140" width="40" height="116"/><rect x="102" y="182" width="62" height="74"/>
-        <rect x="170" y="126" width="34" height="130"/><rect x="208" y="160" width="58" height="96"/><rect x="272" y="190" width="44" height="66"/>
-        <rect x="322" y="150" width="38" height="106"/><rect x="366" y="174" width="70" height="82"/><rect x="442" y="134" width="30" height="122"/>
-        <rect x="478" y="186" width="60" height="70"/><rect x="544" y="158" width="44" height="98"/><rect x="594" y="178" width="66" height="78"/>
-        <rect x="666" y="146" width="36" height="110"/><rect x="708" y="192" width="50" height="64"/>
-      </g>
+      <rect id="skyN" width="1000" height="300" fill="url(#night)"/>
+      <rect id="skyD" class="dawn-sky" width="1000" height="300" fill="url(#dawn)"/>
+      <g id="stars" class="night-only" fill="#fff6ea"></g>
+      <path id="moon" class="night-only" fill="#f6dfb0"/>
+      <g id="sun"><circle id="sunGlow" r="90" fill="url(#sunglow)"/><circle id="sunDisc" r="34" fill="#ffd27a"/></g>
+      <g id="skyline" fill="#1f0b28"></g>
       <g id="windows" fill="#f6dfb0"></g>
-
-      <!-- Our home -->
-      <g transform="translate(818 150)">
-        <circle class="home-glow" cx="75" cy="60" r="120" fill="url(#lamp)"/>
-        <rect x="12" y="44" width="126" height="64" rx="3" fill="#3a1641"/>
-        <path d="M0 48 L75 2 L150 48 Z" fill="#5b2160"/>
-        <rect x="104" y="12" width="14" height="24" fill="#4a1b4f"/>
-        <rect x="24" y="62" width="26" height="22" rx="2" fill="#f6dfb0"/>
-        <rect x="100" y="62" width="26" height="22" rx="2" fill="#f6dfb0"/>
-        <rect x="62" y="70" width="26" height="38" rx="2" fill="#2b1036"/>
-        <path d="M75 82 C 72 77, 66 79, 69 84 L75 89 L81 84 C 84 79, 78 77, 75 82 Z" fill="#f2a7a0"/>
-        <text x="75" y="36" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="13" fill="#f6dfb0">Home</text>
-      </g>
-
-      <!-- Road and lamps -->
-      <rect x="0" y="256" width="1000" height="44" fill="#140716"/>
-      <g fill="#f6dfb0" opacity="0.55">
-        <rect x="20" y="276" width="40" height="3" rx="1.5"/><rect x="120" y="276" width="40" height="3" rx="1.5"/><rect x="220" y="276" width="40" height="3" rx="1.5"/><rect x="320" y="276" width="40" height="3" rx="1.5"/><rect x="420" y="276" width="40" height="3" rx="1.5"/><rect x="520" y="276" width="40" height="3" rx="1.5"/><rect x="620" y="276" width="40" height="3" rx="1.5"/><rect x="720" y="276" width="40" height="3" rx="1.5"/><rect x="820" y="276" width="40" height="3" rx="1.5"/><rect x="920" y="276" width="40" height="3" rx="1.5"/>
-      </g>
+      <g id="house"></g>
+      <rect id="road" y="256" width="1000" height="44" fill="#140716"/>
+      <g id="dashes" fill="#f6dfb0" opacity="0.55"></g>
       <g id="lamps"></g>
-
-      <!-- Her Mini, headlights on -->
-      <g id="car" style="transform: translateX(10px)">
+      <g id="lanterns"></g>
+      <g transform="translate(0 256)"><g id="walkers">
+        <circle cx="0" cy="-31" r="4.6" fill="#fff6ea"/>
+        <path d="M-5 -26 H5 L7 -8 H-7 Z" fill="#fff6ea"/>
+        <rect x="-5" y="-8" width="3.5" height="8" fill="#fff6ea"/><rect x="1.5" y="-8" width="3.5" height="8" fill="#fff6ea"/>
+        <circle cx="15" cy="-29" r="4.3" fill="#f2a7a0"/>
+        <path d="M10.6 -31 Q15 -38 19.4 -31 L20 -22 Q15 -24 10 -22 Z" fill="#7a3550"/>
+        <path d="M10 -24 H20 L24 -2 H6 Z" fill="#f2a7a0"/>
+        <path d="M6 -15 Q8 -13 10 -15" stroke="#fff6ea" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </g></g>
+      <g id="car" style="transform: translateX(-260px)">
         <g transform="translate(0 196) scale(0.82)">
-          <path d="M166 40 L330 22 L330 70 L166 54 Z" fill="url(#beam)"/>
+          <path class="beam" d="M166 40 L330 22 L330 70 L166 54 Z" fill="url(#beamg)"/>
           <ellipse cx="88" cy="70" rx="80" ry="5" fill="#000" opacity="0.35"/>
           <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" fill="var(--mini)"/>
-          <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" fill="#170820" opacity="0.25"/>
+          <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" fill="#170820" opacity="0.22"/>
           <path d="M54 19 Q57 9 67 9 L117 9 Q127 9 130 19 Z" fill="#fff6ea"/>
           <path d="M60 22 L84 22 L84 34 L49 34 Z" fill="#f6dfb0" opacity="0.85"/>
           <path d="M90 22 L123 22 L136 34 L90 34 Z" fill="#f6dfb0" opacity="0.85"/>
@@ -195,9 +206,14 @@
   <main class="wishes">
     <div class="wrap">
       <h2>Everything I wish for us</h2>
-      <p class="sub">Tick each one as it comes true, and your Mini will bring us a little closer to home.</p>
+      <p class="sub">Tick each one as it comes true. Every wish lights a lantern over the road, and your Mini brings us a little closer to home.</p>
       <ul class="items" id="items"></ul>
-      <p class="note" id="note"><strong>Forever starts tonight.</strong>Every wish on this list, we will live together. Happy New Year, Aya. Every year with you is my favourite one.<span class="ar2" lang="ar">أحبّكِ، اليوم وكل عام</span></p>
+      <div class="note" id="note" aria-live="polite">
+        <strong>Our first morning of forever.</strong>
+        Every wish on this list, we will live together. Happy New Year, Aya. Every year with you is my favourite one.
+        <span class="ar2" lang="ar">أحبّكِ، اليوم وكل عام</span>
+        <button class="replay" id="replay" type="button">Watch our moment again</button>
+      </div>
     </div>
   </main>
 
@@ -217,125 +233,254 @@
       ["Grow old together", "Still dancing in our kitchen when our hair is grey."],
       ["Happy, together, forever", "The one wish I make every year, and the one I'll always keep."]
     ];
+    const icons = [
+      '<path d="M-7 1 L0 -6 L7 1 M-5 -1 V7 H5 V-1" fill="none" stroke="#f6dfb0" stroke-width="1.6" stroke-linejoin="round"/>',
+      '<rect x="-4" y="-7" width="8" height="14" rx="2" fill="none" stroke="#f6dfb0" stroke-width="1.6"/><circle cy="4.5" r="0.9" fill="#f6dfb0"/>',
+      '<path d="M-8 3 Q-8 0 -5 0 L-3 -4 H3 L5 0 Q8 0 8 3 V5 H-8 Z" fill="#f6dfb0"/><circle cx="-4.5" cy="5.5" r="2" fill="#2b1036" stroke="#f6dfb0" stroke-width="1"/><circle cx="4.5" cy="5.5" r="2" fill="#2b1036" stroke="#f6dfb0" stroke-width="1"/>',
+      '<circle cx="-5" cy="-3" r="2.2" fill="#f6dfb0"/><circle cx="5" cy="-3" r="2.2" fill="#f6dfb0"/><circle cx="0" cy="0" r="1.7" fill="#f2a7a0"/><path d="M-8 6 Q-5 0 -2 6 M2 6 Q5 0 8 6 M-2 7 Q0 3 2 7" fill="none" stroke="#f6dfb0" stroke-width="1.5"/>',
+      '<circle r="7" fill="none" stroke="#f6dfb0" stroke-width="1.5"/><ellipse rx="3" ry="7" fill="none" stroke="#f6dfb0" stroke-width="1.2"/><path d="M-7 0 H7" stroke="#f6dfb0" stroke-width="1.2"/>',
+      '<path d="M1 -7 A7 7 0 1 0 7 2 A5.5 5.5 0 1 1 1 -7 Z" fill="#f6dfb0"/><circle cx="6" cy="-5" r="1" fill="#f6dfb0"/>',
+      '<circle cx="-3" r="4.2" fill="none" stroke="#f6dfb0" stroke-width="1.5"/><circle cx="3" r="4.2" fill="none" stroke="#f2a7a0" stroke-width="1.5"/>',
+      '<path d="M0 0 C-3 -5 -9 -5 -9 0 C-9 5 -3 5 0 0 C3 -5 9 -5 9 0 C9 5 3 5 0 0 Z" fill="none" stroke="#f6dfb0" stroke-width="1.6"/>'
+    ];
     const colours = [["Chili red", "#d7263d"], ["Pepper white", "#f2f2ef"], ["Midnight black", "#24262b"], ["Island blue", "#3a8fd1"], ["Rose gold", "#e7a39a"], ["Champagne", "#e9d3a0"]];
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const $ = (id) => document.getElementById(id);
+    const svg = $("scene"), wrap = $("wrap"), car = $("car"), walkers = $("walkers");
 
     let saved = { ticks: [], colour: "#d7263d" };
     try { saved = Object.assign(saved, JSON.parse(localStorage.getItem("aya-new-year") || "{}")); } catch (e) {}
     const save = () => { try { localStorage.setItem("aya-new-year", JSON.stringify(saved)); } catch (e) {} };
 
-    // Scene details: stars, lit windows, street lamps
-    let seed = 2027;
-    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    document.getElementById("stars").innerHTML = Array.from({ length: 70 }, () =>
-      `<circle cx="${(rnd() * 1000).toFixed(1)}" cy="${(rnd() * 150).toFixed(1)}" r="${(0.5 + rnd() * 1.2).toFixed(2)}" opacity="${(0.3 + rnd() * 0.6).toFixed(2)}"/>`).join("");
-    const blocks = [[0,168,54],[58,140,40],[102,182,62],[170,126,34],[208,160,58],[272,190,44],[322,150,38],[366,174,70],[442,134,30],[478,186,60],[544,158,44],[594,178,66],[666,146,36],[708,192,50]];
-    let win = "";
-    blocks.forEach(([x, y, w]) => {
-      for (let wy = y + 10; wy < 246; wy += 14) for (let wx = x + 6; wx < x + w - 6; wx += 11) if (rnd() < 0.28) win += `<rect x="${wx}" y="${wy}" width="5" height="6" opacity="${(0.5 + rnd() * 0.5).toFixed(2)}"/>`;
-    });
-    document.getElementById("windows").innerHTML = win;
-    document.getElementById("lamps").innerHTML = [90, 300, 510, 720].map((x) =>
-      `<circle cx="${x}" cy="206" r="34" fill="url(#lamp)"/><rect x="${x - 1.5}" y="206" width="3" height="50" fill="#2a1230"/><circle cx="${x}" cy="206" r="4" fill="#f6dfb0"/>`).join("");
+    // ---------- Scene, drawn for the screen width ----------
+    let W = 1000, hx = 818, startX = 10, endX = 0;
+    const carW = 139;
+    const carXFor = (n) => startX + (endX - startX) * (n / wishes.length);
 
-    // Wishes list
+    function render() {
+      W = window.innerWidth < 640 ? 620 : 1000;
+      hx = W - 182;
+      endX = hx + 12 - carW - 10;
+      svg.setAttribute("viewBox", `0 0 ${W} 300`);
+      ["skyN", "skyD", "road"].forEach((id) => $(id).setAttribute("width", W));
+      let seed = 2027;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      $("stars").innerHTML = Array.from({ length: Math.round(W * 0.08) }, () =>
+        `<circle cx="${(rnd() * W).toFixed(1)}" cy="${(40 + rnd() * 150).toFixed(1)}" r="${(0.5 + rnd() * 1.2).toFixed(2)}" opacity="${(0.3 + rnd() * 0.6).toFixed(2)}"/>`).join("");
+      const mx = W * 0.15;
+      $("moon").setAttribute("d", `M${mx} 82 a26 26 0 1 0 22 40 a21 21 0 1 1 -22 -40 Z`);
+      $("sunGlow").setAttribute("cx", W * 0.46); $("sunGlow").setAttribute("cy", 170);
+      $("sunDisc").setAttribute("cx", W * 0.46); $("sunDisc").setAttribute("cy", 170);
+      let sky = "", win = "", x = 0;
+      while (x < hx - 30) {
+        const w = 30 + Math.round(rnd() * 40), h = 64 + Math.round(rnd() * 66), y = 256 - h;
+        sky += `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+        for (let wy = y + 10; wy < 246; wy += 14) for (let wx = x + 6; wx < x + w - 6; wx += 11) if (rnd() < 0.28) win += `<rect x="${wx}" y="${wy}" width="5" height="6" opacity="${(0.5 + rnd() * 0.5).toFixed(2)}"/>`;
+        x += w + 4;
+      }
+      $("skyline").innerHTML = sky;
+      $("windows").innerHTML = win;
+      $("house").innerHTML = `<g transform="translate(${hx} 150)">
+        <circle class="home-glow" cx="75" cy="60" r="120" fill="url(#lamp)"/>
+        <rect x="12" y="44" width="126" height="64" rx="3" fill="#3a1641"/>
+        <path d="M0 48 L75 2 L150 48 Z" fill="#5b2160"/>
+        <rect x="104" y="12" width="14" height="24" fill="#4a1b4f"/>
+        <rect x="24" y="62" width="26" height="22" rx="2" fill="#f6dfb0"/>
+        <rect x="100" y="62" width="26" height="22" rx="2" fill="#f6dfb0"/>
+        <rect x="62" y="70" width="26" height="38" rx="2" fill="#2b1036"/>
+        <path d="M75 82 C 72 77, 66 79, 69 84 L75 89 L81 84 C 84 79, 78 77, 75 82 Z" fill="#f2a7a0"/>
+        <text x="75" y="36" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="13" fill="#f6dfb0">Home</text></g>`;
+      let d = "";
+      for (let dx = 20; dx < W; dx += 100) d += `<rect x="${dx}" y="276" width="40" height="3" rx="1.5"/>`;
+      $("dashes").innerHTML = d;
+      let l = "";
+      for (let lx = 90; lx < hx - 40; lx += 210) l += `<circle cx="${lx}" cy="206" r="34" fill="url(#lamp)"/><rect x="${lx - 1.5}" y="206" width="3" height="50" fill="#2a1230"/><circle cx="${lx}" cy="206" r="4" fill="#f6dfb0"/>`;
+      $("lamps").innerHTML = l;
+      $("lanterns").innerHTML = wishes.map((_, k) => {
+        const cx = carXFor(k + 1) + carW / 2, cy = k % 2 ? 158 : 138;
+        return `<g class="lantern" id="lan${k}" transform="translate(${cx.toFixed(1)} ${cy})"><line y1="12" y2="34" stroke="#f6dfb0" stroke-opacity="0.35" stroke-width="1"/><circle r="12.5" fill="#2b1036" stroke="#f6dfb0" stroke-width="1.4"/><g class="icon">${icons[k]}</g></g>`;
+      }).join("");
+      sizeScene();
+    }
+
+    function sizeScene() {
+      const natural = wrap.clientWidth * 300 / W;
+      svg.style.height = `${Math.round(Math.min(natural, window.innerHeight * 0.6, 640))}px`;
+    }
+
+    function placeCar(n, animate, slow) {
+      car.classList.toggle("drive", !!slow);
+      car.style.transform = `translateX(${carXFor(n).toFixed(1)}px)`;
+      if (animate) {
+        car.style.setProperty("--spin", slow ? "1.3s" : "300ms");
+        car.classList.remove("moving"); void car.getBBox(); car.classList.add("moving");
+      }
+      car.classList.toggle("parked", n === wishes.length);
+    }
+
+    // ---------- Effects canvas: sparks, hearts, and her name in fireworks ----------
+    const cv = $("fw"), fx = { parts: [], queue: [], running: false, ctx: cv.getContext("2d"), w: 0, h: 0 };
+    function fxSize() {
+      const r = wrap.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = r.width * dpr; cv.height = r.height * dpr;
+      fx.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      fx.w = r.width; fx.h = r.height;
+    }
+    function rel(el) { const a = el.getBoundingClientRect(), b = wrap.getBoundingClientRect(); return { x: a.left - b.left + a.width / 2, y: a.top - b.top, w: a.width, h: a.height }; }
+    function later(ms, fn) { fx.queue.push({ at: performance.now() + ms, fn }); start(); }
+    function start() { if (!fx.running) { fx.running = true; requestAnimationFrame(frame); } }
+    function burst(x, y, c, n) {
+      for (let i = 0; i < n; i += 1) { const a = (i / n) * Math.PI * 2, s = 1.1 + Math.random() * 2.6; fx.parts.push({ k: "spark", x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, c }); }
+    }
+    function hearts(x, y) {
+      for (let i = 0; i < 12; i += 1) fx.parts.push({ k: "heart", x: x + (Math.random() - 0.5) * 40, y, vx: (Math.random() - 0.5) * 0.8, vy: -0.8 - Math.random() * 1.2, life: 1, c: i % 2 ? "#f2a7a0" : "#f6dfb0", s: 12 + Math.random() * 10 });
+      start();
+    }
+    function spell(text, cx, cy) {
+      const w = Math.round(fx.w), h = Math.round(fx.h), off = document.createElement("canvas");
+      off.width = w; off.height = h;
+      const o = off.getContext("2d"), size = Math.min(h * 0.42, w * 0.2);
+      o.font = `italic 500 ${size}px "Bodoni Moda", Georgia, serif`;
+      o.textAlign = "center"; o.textBaseline = "middle"; o.fillStyle = "#fff";
+      o.fillText(text, w / 2, h * 0.34);
+      const data = o.getImageData(0, 0, w, h).data, step = Math.max(4, Math.round(size / 24));
+      let pts = [];
+      for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) if (data[(y * w + x) * 4 + 3] > 128) pts.push([x, y]);
+      if (pts.length > 480) pts = pts.filter((_, i) => i % Math.ceil(pts.length / 480) === 0);
+      const t0 = performance.now(), pal = ["#f6dfb0", "#ffd27a", "#fff6ea", "#f2a7a0"];
+      pts.forEach(([tx, ty], i) => fx.parts.push({ k: "letter", ox: cx, oy: cy, tx, ty, x: cx, y: cy, t0: t0 + (i % 40) * 6, vy: 0, life: 1, c: pal[i % pal.length] }));
+      start();
+    }
+    function frame(now) {
+      const ctx = fx.ctx;
+      fx.queue = fx.queue.filter((q) => (now >= q.at ? (q.fn(), false) : true));
+      ctx.clearRect(0, 0, fx.w, fx.h);
+      for (let i = fx.parts.length - 1; i >= 0; i -= 1) {
+        const p = fx.parts[i];
+        if (p.k === "spark") { p.x += p.vx; p.y += p.vy; p.vy += 0.035; p.vx *= 0.985; p.vy *= 0.985; p.life -= 0.012; }
+        else if (p.k === "heart") { p.x += p.vx; p.y += p.vy; p.life -= 0.012; }
+        else {
+          const t = now - p.t0;
+          if (t < 0) continue;
+          if (t < 1000) { const e = 1 - Math.pow(1 - t / 1000, 3); p.x = p.ox + (p.tx - p.ox) * e; p.y = p.oy + (p.ty - p.oy) * e; }
+          else if (t < 3000) { p.x = p.tx; p.y = p.ty; p.life = 0.75 + Math.random() * 0.25; }
+          else { p.vy += 0.05; p.y += p.vy; p.life = Math.max(0, p.life - 0.02); }
+        }
+        if (p.life <= 0) { fx.parts.splice(i, 1); continue; }
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.c;
+        if (p.k === "heart") { ctx.font = `${p.s}px Georgia, serif`; ctx.fillText("♥", p.x, p.y); }
+        else { ctx.beginPath(); ctx.arc(p.x, p.y, p.k === "letter" ? 1.9 : 1.8, 0, Math.PI * 2); ctx.fill(); }
+      }
+      ctx.globalAlpha = 1;
+      if (fx.parts.length || fx.queue.length) requestAnimationFrame(frame);
+      else { fx.running = false; ctx.clearRect(0, 0, fx.w, fx.h); }
+    }
+    function celebrate() {
+      if (reduce) return;
+      fxSize();
+      const home = rel($("house"));
+      const pal = ["#f6dfb0", "#f2a7a0", "#fff6ea", "#ffd27a", "#ff8fa3"];
+      [[0, 0.1, 0.25], [350, -0.25, 0.12], [700, 0.3, 0.1], [1050, -0.05, 0.05]].forEach(([t, dx, dy], i) =>
+        later(t, () => burst(home.x + dx * home.w, home.y + dy * fx.h, pal[i % pal.length], 70)));
+      later(1300, () => spell("Aya", fx.w / 2, fx.h * 0.55));
+    }
+
+    // ---------- Wishes ----------
     const tickSvg = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="#2b1036" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    const list = document.getElementById("items");
+    const list = $("items");
     list.innerHTML = wishes.map(([t, d], k) =>
       `<li><label class="item"><input type="checkbox" id="wish${k}" data-k="${k}"${saved.ticks.includes(k) ? " checked" : ""}><span class="tick">${tickSvg}</span><span class="t"><b>${t}</b><span>${d}</span></span></label></li>`).join("");
+    const done = () => [...list.querySelectorAll("input:checked")].map((i) => +i.dataset.k);
+    let ending = [];
+    const clearEnding = () => { ending.forEach(clearTimeout); ending = []; };
 
-    const car = document.getElementById("car");
-    const progress = document.getElementById("progress");
-    const startX = 10, endX = 668;
-    let wasForever = false;
+    function syncLanterns(ticks) { wishes.forEach((_, k) => $(`lan${k}`).classList.toggle("lit", ticks.includes(k))); }
+    function setProgress(n) { $("progress").textContent = n === wishes.length ? "All 8 wishes came true" : `${n} of ${wishes.length} wishes come true`; }
 
-    function update(animate) {
-      const done = [...list.querySelectorAll("input:checked")].map((i) => +i.dataset.k);
-      saved.ticks = done;
-      save();
-      const n = done.length, all = n === wishes.length;
-      progress.textContent = all ? "All 8 wishes came true" : `${n} of ${wishes.length} wishes come true`;
-      car.style.transform = `translateX(${startX + (endX - startX) * (n / wishes.length)}px)`;
-      if (animate) { car.classList.remove("moving"); void car.getBBox(); car.classList.add("moving"); }
-      document.body.classList.toggle("forever", all);
-      if (all && !wasForever && animate) setTimeout(fireworks, 300);
-      wasForever = all;
+    function finalState() {
+      document.body.classList.add("forever", "dawn");
+      walkers.classList.remove("show");
     }
-    list.addEventListener("change", () => update(true));
 
-    // Mini colour
-    const sw = document.getElementById("swatches");
+    function playEnding() {
+      clearEnding();
+      if (reduce) { finalState(); return; }
+      const step = (ms, fn) => ending.push(setTimeout(fn, ms));
+      const doorX = hx + 75, fromX = endX + carW - 4;
+      walkers.style.transition = "none";
+      walkers.style.transform = `translateX(${fromX}px)`;
+      step(450, () => { walkers.style.transition = ""; walkers.classList.add("show"); });
+      step(650, () => { walkers.style.transform = `translateX(${doorX - 8}px)`; });
+      step(2300, () => { walkers.classList.remove("show"); document.body.classList.add("forever"); });
+      step(2500, celebrate);
+      step(6600, () => document.body.classList.add("dawn"));
+    }
+
+    list.addEventListener("change", (e) => {
+      const ticks = done(), n = ticks.length, k = +e.target.dataset.k;
+      saved.ticks = ticks; save();
+      setProgress(n);
+      syncLanterns(ticks);
+      placeCar(n, true, false);
+      if (e.target.checked && !reduce) setTimeout(() => { fxSize(); const c = rel(car); hearts(c.x, c.y); }, 300);
+      if (n === wishes.length) playEnding();
+      else { clearEnding(); document.body.classList.remove("forever", "dawn"); walkers.classList.remove("show"); }
+    });
+
+    $("replay").addEventListener("click", () => {
+      document.body.classList.remove("dawn", "forever");
+      setTimeout(playEnding, 600);
+    });
+
+    // ---------- Mini colour ----------
+    const sw = $("swatches");
     sw.innerHTML = colours.map(([name, hex]) => `<button type="button" class="swatch" style="background:${hex}" aria-label="${name}" aria-pressed="false" data-c="${hex}"></button>`).join("");
     function paint(hex) {
       document.documentElement.style.setProperty("--mini", hex);
       sw.querySelectorAll(".swatch").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.c === hex)));
-      saved.colour = hex;
-      save();
+      saved.colour = hex; save();
     }
     sw.addEventListener("click", (e) => { const b = e.target.closest(".swatch"); if (b) paint(b.dataset.c); });
 
-    // Countdown to midnight, 1 January 2027
+    // ---------- Countdown to midnight, 1 January 2027 ----------
     const target = new Date(2027, 0, 1, 0, 0, 0).getTime();
     const pad = (v) => String(v).padStart(2, "0");
-    const countEl = document.getElementById("count");
+    let celebrated = false;
     function tick() {
       const left = target - Date.now();
       if (left <= 0) {
-        countEl.innerHTML = '<p class="newyear">It\'s 2027. Happy New Year, my love.</p>';
+        $("count").innerHTML = '<p class="newyear">It\'s 2027. Happy New Year, my love.</p>';
+        if (!celebrated && Date.now() - target < 86400000) { celebrated = true; setTimeout(celebrate, 900); }
         return;
       }
       const s = Math.floor(left / 1000);
-      document.getElementById("cd-d").textContent = Math.floor(s / 86400);
-      document.getElementById("cd-h").textContent = pad(Math.floor((s % 86400) / 3600));
-      document.getElementById("cd-m").textContent = pad(Math.floor((s % 3600) / 60));
-      document.getElementById("cd-s").textContent = pad(s % 60);
+      $("cd-d").textContent = Math.floor(s / 86400);
+      $("cd-h").textContent = pad(Math.floor((s % 86400) / 3600));
+      $("cd-m").textContent = pad(Math.floor((s % 3600) / 60));
+      $("cd-s").textContent = pad(s % 60);
       setTimeout(tick, 1000 - (Date.now() % 1000));
     }
-    tick();
 
-    // Fireworks over our home, once
-    const canvas = document.getElementById("fw");
-    function fireworks() {
-      if (reduce) return;
-      const box = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = box.width * dpr;
-      canvas.height = box.height * dpr;
-      const ctx = canvas.getContext("2d");
-      ctx.scale(dpr, dpr);
-      const palette = ["#f6dfb0", "#f2a7a0", "#fff6ea", "#ffd27a", "#ff8fa3"];
-      const parts = [];
-      const bursts = [[0.86, 0.22, 0], [0.74, 0.14, 450], [0.93, 0.12, 900], [0.8, 0.3, 1400], [0.66, 0.24, 1900]];
-      const t0 = performance.now();
-      let launched = 0;
-      function frame(now) {
-        while (launched < bursts.length && now - t0 >= bursts[launched][2]) {
-          const [bx, by] = bursts[launched];
-          const colour = palette[launched % palette.length];
-          for (let i = 0; i < 70; i += 1) {
-            const a = (i / 70) * Math.PI * 2, sp = 1.2 + Math.random() * 2.4;
-            parts.push({ x: bx * box.width, y: by * box.height, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, c: colour });
-          }
-          launched += 1;
-        }
-        ctx.clearRect(0, 0, box.width, box.height);
-        for (let i = parts.length - 1; i >= 0; i -= 1) {
-          const p = parts[i];
-          p.x += p.vx; p.y += p.vy; p.vy += 0.035; p.vx *= 0.985; p.vy *= 0.985; p.life -= 0.012;
-          if (p.life <= 0) { parts.splice(i, 1); continue; }
-          ctx.globalAlpha = p.life;
-          ctx.fillStyle = p.c;
-          ctx.beginPath(); ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2); ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        if (parts.length || launched < bursts.length) requestAnimationFrame(frame);
-        else ctx.clearRect(0, 0, box.width, box.height);
-      }
-      requestAnimationFrame(frame);
-    }
-
+    // ---------- Start ----------
     paint(saved.colour);
-    update(false);
+    render();
+    const ticks0 = done();
+    setProgress(ticks0.length);
+    syncLanterns(ticks0);
+    if (ticks0.length === wishes.length) finalState();
+    if (reduce) placeCar(ticks0.length, false, false);
+    else requestAnimationFrame(() => requestAnimationFrame(() => placeCar(ticks0.length, true, true)));
+    setTimeout(() => car.classList.remove("drive"), 1400);
+    tick();
+    if (location.hash === "#celebrate") setTimeout(celebrate, 1600);
+
+    let lastW = W;
+    window.addEventListener("resize", () => {
+      const nextW = window.innerWidth < 640 ? 620 : 1000;
+      if (nextW !== lastW) { lastW = nextW; render(); syncLanterns(done()); placeCar(done().length, false, false); }
+      else sizeScene();
+    });
   }
   </script>
 </body>
