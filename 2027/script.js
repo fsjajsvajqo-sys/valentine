@@ -1,18 +1,18 @@
 // Twelve stars for twelve months: tap the glowing star to connect the heart.
 
 const promises = [
-  ["January", "To start the year the way I want to spend all of them: next to you."],
-  ["February", "To ask you to be my Valentine again, and every year after."],
-  ["March", "To bring you flowers for no reason at all."],
-  ["April", "To listen first, even when I think I already know."],
-  ["May", "To plan a day that is only about you."],
-  ["June", "To take you somewhere new, just the two of us."],
-  ["July", "To make you laugh until you can't breathe."],
-  ["August", "To slow down and enjoy the small moments with you."],
-  ["September", "To support every dream you chase."],
-  ["October", "To keep choosing you, on the easy days and the hard ones."],
-  ["November", "To say thank you, out loud, for everything you do."],
-  ["December", "To end the year holding your hand, and start the next one the same way."]
+  ["January", "To begin this year the way I want to begin every year for the rest of my life: loving you more than I did the year before."],
+  ["February", "To be your Valentine again, and to hold your hand like it's the very first time I ever held it."],
+  ["March", "To give you the new phone you deserve, so every \"good morning\", every \"I miss you\" and every \"I love you\" reaches you a little faster."],
+  ["April", "To find our home. A door that's ours, a light that's always on, and no more saying goodbye to you at the end of the night."],
+  ["May", "To build that home with you, piece by piece, until every corner of it feels like us."],
+  ["June", "To fall asleep beside you and wake up to your face, every single morning, for the rest of my life."],
+  ["July", "To make you laugh in our kitchen, dance with you in our living room, and turn ordinary days into our favourite memories."],
+  ["August", "To hold you close on the hard days and remind you that you will never carry anything alone again."],
+  ["September", "To keep dreaming with you about our own little family: children with your smile, your kindness, and our love in their hearts."],
+  ["October", "To be the husband you're proud of today, and one day, the father our children run to."],
+  ["November", "To thank God for you every day, because you are the answer to prayers I didn't even know how to say."],
+  ["December", "To end this year in our own home, with you in my arms, and our forever only just beginning."]
 ];
 
 const NS = "http://www.w3.org/2000/svg";
