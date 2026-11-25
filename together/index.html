@@ -8,7 +8,7 @@
   <title>Happy New Year, Aya</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=El+Messiri:wght@600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=El+Messiri:wght@600&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* New Year's Eve: driving home to 2027.
        Motion: controls use 150/200/300ms, ease-out, transform + opacity.
@@ -339,14 +339,18 @@
     function spell(text, cx, cy) {
       const w = Math.round(fx.w), h = Math.round(fx.h), off = document.createElement("canvas");
       off.width = w; off.height = h;
-      const o = off.getContext("2d"), size = Math.min(h * 0.42, w * 0.2);
-      o.font = `italic 500 ${size}px "Bodoni Moda", Georgia, serif`;
-      o.textAlign = "center"; o.textBaseline = "middle"; o.fillStyle = "#fff";
-      o.fillText(text, w / 2, h * 0.34);
-      const data = o.getImageData(0, 0, w, h).data, step = Math.max(4, Math.round(size / 24));
+      // Bold, even strokes so every letter survives being sampled into sparks
+      const o = off.getContext("2d"), size = Math.min(h * 0.5, w * 0.24);
+      o.font = `700 ${size}px Jost, "Segoe UI", Arial, sans-serif`;
+      if ("letterSpacing" in o) o.letterSpacing = `${Math.round(size * 0.1)}px`;
+      o.textAlign = "center"; o.textBaseline = "middle"; o.fillStyle = "#fff"; o.strokeStyle = "#fff";
+      o.lineWidth = Math.max(2, size * 0.03);
+      o.fillText(text, w / 2, h * 0.36);
+      o.strokeText(text, w / 2, h * 0.36);
+      const data = o.getImageData(0, 0, w, h).data, step = Math.max(4, Math.round(size / 30));
       let pts = [];
       for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) if (data[(y * w + x) * 4 + 3] > 128) pts.push([x, y]);
-      if (pts.length > 480) pts = pts.filter((_, i) => i % Math.ceil(pts.length / 480) === 0);
+      if (pts.length > 750) pts = pts.filter((_, i) => i % Math.ceil(pts.length / 750) === 0);
       const t0 = performance.now(), pal = ["#f6dfb0", "#ffd27a", "#fff6ea", "#f2a7a0"];
       pts.forEach(([tx, ty], i) => fx.parts.push({ k: "letter", ox: cx, oy: cy, tx, ty, x: cx, y: cy, t0: t0 + (i % 40) * 6, vy: 0, life: 1, c: pal[i % pal.length] }));
       start();
@@ -370,7 +374,7 @@
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.c;
         if (p.k === "heart") { ctx.font = `${p.s}px Georgia, serif`; ctx.fillText("♥", p.x, p.y); }
-        else { ctx.beginPath(); ctx.arc(p.x, p.y, p.k === "letter" ? 1.9 : 1.8, 0, Math.PI * 2); ctx.fill(); }
+        else { ctx.beginPath(); ctx.arc(p.x, p.y, p.k === "letter" ? 2.3 : 1.8, 0, Math.PI * 2); ctx.fill(); }
       }
       ctx.globalAlpha = 1;
       if (fx.parts.length || fx.queue.length) requestAnimationFrame(frame);
@@ -383,7 +387,8 @@
       const pal = ["#f6dfb0", "#f2a7a0", "#fff6ea", "#ffd27a", "#ff8fa3"];
       [[0, 0.1, 0.25], [350, -0.25, 0.12], [700, 0.3, 0.1], [1050, -0.05, 0.05]].forEach(([t, dx, dy], i) =>
         later(t, () => burst(home.x + dx * home.w, home.y + dy * fx.h, pal[i % pal.length], 70)));
-      later(1300, () => spell("Aya", fx.w / 2, fx.h * 0.55));
+      const fontReady = document.fonts ? document.fonts.load("700 40px Jost").catch(() => {}) : Promise.resolve();
+      later(1300, () => fontReady.then(() => spell("AYA", fx.w / 2, fx.h * 0.55)));
     }
 
     // ---------- Wishes ----------
