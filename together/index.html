@@ -77,8 +77,8 @@
     .picker { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .picker p { margin: 0; font-size: 15px; color: var(--soft); }
     .swatches { display: flex; gap: 10px; }
-    .swatch { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--plum-deep); box-shadow: 0 0 0 1px rgba(246, 223, 176, 0.35); padding: 0; cursor: pointer; transition: transform var(--m150) var(--ease-out); }
-    .swatch:hover { transform: scale(1.08); }
+    .swatch { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--plum-deep); box-shadow: 0 0 0 1px rgba(246, 223, 176, 0.35); padding: 0; cursor: pointer; transition: transform var(--m150) var(--ease-out); }
+    @media (hover: hover) { .swatch:hover { transform: scale(1.08); } }
     .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--champagne); }
     .swatch:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
     .progress { margin: 0; font-weight: 500; color: var(--champagne); white-space: nowrap; }
@@ -114,6 +114,35 @@
     footer { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
     footer a { color: var(--champagne); }
 
+    /* Touch and motion polish */
+    a, button, label, .item { -webkit-tap-highlight-color: transparent; }
+    .rise { opacity: 0; animation: rise var(--m300) var(--ease-out) forwards; }
+    .rise-2 { animation-delay: var(--m150); }
+    .rise-3 { animation-delay: var(--m300); }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .item { position: relative; }
+    .item::after { content: ""; position: absolute; inset: 0 -12px; border-radius: 14px; background: rgba(246, 223, 176, 0.12); opacity: 0; pointer-events: none; }
+    .item.just::after { animation: flash var(--m300) var(--ease-out); }
+    @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
+    .lantern .ping { opacity: 0; transform-box: fill-box; transform-origin: center; }
+    .lantern.pop .ping { animation: ping var(--m300) var(--ease-out); }
+    @keyframes ping { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(2.2); } }
+    .scene-progress { display: none; }
+    footer a { display: inline-block; padding: 12px 0; }
+
+    /* Phones: keep the scene pinned so every tick shows the car move */
+    @media (max-width: 767.98px) {
+      .top { padding-top: max(24px, env(safe-area-inset-top)); }
+      .ar { font-size: 26px; }
+      .lede { font-size: 16px; margin-top: 10px; }
+      .scenewrap { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.7); }
+      .scene-progress { display: block; position: absolute; right: 10px; bottom: 8px; margin: 0; padding: 6px 12px; border-radius: 999px; background: rgba(23, 8, 32, 0.78); color: var(--champagne); font-size: 14px; font-weight: 500; white-space: nowrap; }
+      .strip .wrap { padding-block: 12px; }
+      .wishes { padding-top: 28px; }
+      .item { padding: 18px 0; }
+      .t b { font-size: 22px; }
+    }
+
     @media (max-width: 760px) {
       .top .wrap { grid-template-columns: minmax(0, 1fr); gap: 22px; }
       .count { justify-self: start; text-align: left; }
@@ -122,7 +151,8 @@
     }
     @media (prefers-reduced-motion: reduce) {
       #car, #car.drive, .beam, .lantern, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch { transition: none; }
-      #car.moving .wheel-spin { animation: none; }
+      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping { animation: none; }
+      .rise { animation: none; opacity: 1; }
     }
   </style>
 </head>
@@ -131,11 +161,11 @@
   <header class="top">
     <div class="wrap">
       <div>
-        <p class="ar" lang="ar">كل عام وأنتِ عمري</p>
-        <h1>Happy New Year, Aya</h1>
-        <p class="lede">Another year with you is the only resolution I need. Here is everything I wish for us in 2027, and for the rest of our lives.</p>
+        <p class="ar rise" lang="ar">كل عام وأنتِ عمري</p>
+        <h1 class="rise rise-2">Happy New Year, Aya</h1>
+        <p class="lede rise rise-3">Another year with you is the only resolution I need. Here is everything I wish for us in 2027, and for the rest of our lives.</p>
       </div>
-      <div class="count" id="count">
+      <div class="count rise rise-3" id="count">
         <p class="count-label">Until our 2027</p>
         <div class="digits">
           <div><b id="cd-d">00</b><span>days</span></div>
@@ -196,6 +226,7 @@
       </g>
     </svg>
     <canvas id="fw" aria-hidden="true"></canvas>
+    <p class="scene-progress" id="sceneProgress" aria-hidden="true">0 of 8</p>
   </div>
 
   <div class="strip">
@@ -307,7 +338,7 @@
       $("lamps").innerHTML = l;
       $("lanterns").innerHTML = wishes.map((_, k) => {
         const cx = carXFor(k + 1) + carW / 2, cy = k % 2 ? 158 : 138;
-        return `<g class="lantern" id="lan${k}" transform="translate(${cx.toFixed(1)} ${cy})"><line y1="12" y2="34" stroke="#f6dfb0" stroke-opacity="0.35" stroke-width="1"/><circle r="12.5" fill="#2b1036" stroke="#f6dfb0" stroke-width="1.4"/><g class="icon">${icons[k]}</g></g>`;
+        return `<g class="lantern" id="lan${k}" transform="translate(${cx.toFixed(1)} ${cy})"><line y1="12" y2="34" stroke="#f6dfb0" stroke-opacity="0.35" stroke-width="1"/><circle r="12.5" fill="#2b1036" stroke="#f6dfb0" stroke-width="1.4"/><circle class="ping" r="12.5" fill="none" stroke="#f6dfb0" stroke-width="1.4"/><g class="icon">${icons[k]}</g></g>`;
       }).join("");
       sizeScene();
     }
@@ -410,7 +441,10 @@
     const clearEnding = () => { ending.forEach(clearTimeout); ending = []; };
 
     function syncLanterns(ticks) { wishes.forEach((_, k) => $(`lan${k}`).classList.toggle("lit", ticks.includes(k))); }
-    function setProgress(n) { $("progress").textContent = n === wishes.length ? "All 8 wishes came true" : `${n} of ${wishes.length} wishes come true`; }
+    function setProgress(n) {
+      $("progress").textContent = n === wishes.length ? "All 8 wishes came true" : `${n} of ${wishes.length} wishes come true`;
+      $("sceneProgress").textContent = n === wishes.length ? "All 8 came true" : `${n} of ${wishes.length}`;
+    }
 
     function finalState() {
       document.body.classList.add("forever", "dawn");
@@ -429,6 +463,10 @@
       step(2300, () => { walkers.classList.remove("show"); document.body.classList.add("forever"); });
       step(2500, celebrate);
       step(6600, () => document.body.classList.add("dawn"));
+      step(7000, () => {
+        const note = $("note"), r = note.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > window.innerHeight) note.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      });
     }
 
     list.addEventListener("change", (e) => {
@@ -437,6 +475,13 @@
       setProgress(n);
       syncLanterns(ticks);
       placeCar(n, true, false);
+      const row = e.target.closest(".item");
+      row.classList.remove("just"); void row.offsetWidth; row.classList.add("just");
+      if (e.target.checked) {
+        const lan = $(`lan${k}`);
+        lan.classList.remove("pop"); void lan.getBBox(); lan.classList.add("pop");
+        if (navigator.vibrate && !reduce) navigator.vibrate(12);
+      }
       if (e.target.checked && !reduce) setTimeout(() => { fxSize(); const c = rel(car); hearts(c.x, c.y); }, 300);
       if (n === wishes.length) playEnding();
       else { clearEnding(); document.body.classList.remove("forever", "dawn"); walkers.classList.remove("show"); }
