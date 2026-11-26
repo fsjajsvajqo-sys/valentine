@@ -529,7 +529,7 @@
       { title: "Late-night calls", date: "" },
       { title: "Will you be my Valentine?", date: "February 2026" },
       { title: "You said yes", date: "Engaged, 6 June 2026" },
-      { title: "Two years of us", date: "" }
+      { title: "Our second New Year", date: "31 December 2026" }
     ];
     const signIcons = [
       '<path d="M0 -6 L1.6 -1.6 L6 0 L1.6 1.6 L0 6 L-1.6 1.6 L-6 0 L-1.6 -1.6 Z" fill="currentColor"/>',
@@ -544,7 +544,7 @@
     const signPos = milestones.map((_, i) => Math.floor(0.5 + i * (wishes.length - 1) / (milestones.length - 1)) + 0.5);
 
     // The time capsule letter, encoded so it can't be read early from the page text
-    const LETTER = "WyJJdFx1MDAyN3MgbWlkbmlnaHQuIEEgbmV3IHllYXIgaGFzIGp1c3QgYmVndW4sIGFuZCB0aGUgdmVyeSBmaXJzdCB0aGluZyBJIHdhbnRlZCB0byBkbyBpbiBpdCB3YXMgdGVsbCB5b3UgdGhhdCBJIGxvdmUgeW91LiIsIlR3byB5ZWFycyBhZ28gSSBkaWRuXHUwMDI3dCBrbm93IG9uZSBwZXJzb24gY291bGQgYmVjb21lIG15IHdob2xlIHdvcmxkLiBOb3cgSSBjYW5cdTAwMjd0IHJlbWVtYmVyIHdoYXQgbXkgZGF5cyBmZWx0IGxpa2UgYmVmb3JlIHlvdSwgYW5kIEkgbmV2ZXIgd2FudCB0by4iLCJJbiAyMDI3IEkgd2FudCB0byBidWlsZCBldmVyeXRoaW5nIHdlIGRyZWFtIGFib3V0OiBvdXIgb3duIGhvbWUsIG91ciBvd24gZmFtaWx5LCBhbmQgYSBsaWZlIGZ1bGwgb2Ygc21hbGwgbW9tZW50cyB0aGF0IGJlbG9uZyBvbmx5IHRvIHVzLiBCdXQgZXZlbiBpZiB3ZSBoYWQgbm9uZSBvZiB0aGF0IHlldCwgSSB3b3VsZCBzdGlsbCBiZSB0aGUgbHVja2llc3QgbWFuIGFsaXZlLCBiZWNhdXNlIEkgaGF2ZSB5b3UuIiwiVGhhbmsgeW91IGZvciBldmVyeSB5ZWFyIHNvIGZhci4gSSBwcm9taXNlIHlvdSBldmVyeSB5ZWFyIHRoYXRcdTAwMjdzIGxlZnQuIiwiSGFwcHkgTmV3IFllYXIsIG15IGxvdmUuIl0=";
+    const LETTER = "WyJJdFx1MDAyN3MgbWlkbmlnaHQuIEEgbmV3IHllYXIgaGFzIGp1c3QgYmVndW4sIGFuZCB0aGUgdmVyeSBmaXJzdCB0aGluZyBJIHdhbnRlZCB0byBkbyBpbiBpdCB3YXMgdGVsbCB5b3UgdGhhdCBJIGxvdmUgeW91LiIsIkJlZm9yZSAyMSBBdWd1c3QgMjAyNSBJIGRpZG5cdTAwMjd0IGtub3cgb25lIHBlcnNvbiBjb3VsZCBiZWNvbWUgbXkgd2hvbGUgd29ybGQuIE5vdyBJIGNhblx1MDAyN3QgcmVtZW1iZXIgd2hhdCBteSBkYXlzIGZlbHQgbGlrZSBiZWZvcmUgeW91LCBhbmQgSSBuZXZlciB3YW50IHRvLiIsIkluIDIwMjcgSSB3YW50IHRvIGJ1aWxkIGV2ZXJ5dGhpbmcgd2UgZHJlYW0gYWJvdXQ6IG91ciBvd24gaG9tZSwgb3VyIG93biBmYW1pbHksIGFuZCBhIGxpZmUgZnVsbCBvZiBzbWFsbCBtb21lbnRzIHRoYXQgYmVsb25nIG9ubHkgdG8gdXMuIEJ1dCBldmVuIGlmIHdlIGhhZCBub25lIG9mIHRoYXQgeWV0LCBJIHdvdWxkIHN0aWxsIGJlIHRoZSBsdWNraWVzdCBtYW4gYWxpdmUsIGJlY2F1c2UgSSBoYXZlIHlvdS4iLCJUaGFuayB5b3UgZm9yIGV2ZXJ5IGRheSBzbyBmYXIuIEkgcHJvbWlzZSB5b3UgZXZlcnkgeWVhciB0aGF0XHUwMDI3cyBsZWZ0LiIsIkhhcHB5IE5ldyBZZWFyLCBteSBsb3ZlLiJd";
 
     // Midnight on 1 January 2027 in Amman (Jordan is UTC+3 all year)
     const MIDNIGHT_UTC = Date.UTC(2026, 11, 31, 21, 0, 0);
