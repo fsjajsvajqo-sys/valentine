@@ -8,83 +8,148 @@
   <title>Happy New Year, Aya</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=El+Messiri:wght@600&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500..700&family=El+Messiri:wght@600&family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* New Year's Eve: driving home to 2027.
-       Motion: controls use 150/200/300ms, ease-out, transform + opacity.
-       Optical exceptions, each tied to a story beat and never looping: the Mini driving in,
-       the two of us walking home, fireworks spelling AYA, and the first sunrise of 2027. */
+    /* ==========================================================================
+       Happy New Year, Aya: driving home to 2027.
+       Design tokens live in :root; everything below uses them.
+       Motion: controls use 150/200/300ms ease-out on transform/opacity.
+       Story beats (drive-in, walking home, fireworks, sunrise, final countdown)
+       and the ambient night are deliberate exceptions; all stop for reduced motion.
+       ========================================================================== */
+
     :root {
-      --plum: #2b1036; --plum-deep: #170820; --rose: #f2a7a0;
-      --champagne: #f6dfb0; --cream: #fff6ea; --soft: #cdb6c9; --line: rgba(246, 223, 176, 0.16);
-      --mini: #d7263d;
+      /* Colour */
+      --plum: #2b1036;        /* night sky top + header */
+      --plum-deep: #170820;   /* page background */
+      --dusk: #5b2a6b;        /* sunrise sky top + header at dawn */
+      --wine: #7a3550;
+      --rose: #f2a7a0;
+      --blush: #ff8fa3;
+      --gold: #ffd27a;
+      --champagne: #f6dfb0;
+      --cream: #fff6ea;
+      --soft: #cdb6c9;        /* secondary text */
+      --line: rgba(246, 223, 176, 0.16);
+      --mini: #d7263d;        /* her chosen Mini colour, set by script */
+
+      /* Type scale */
+      --fs-xs: 14px;
+      --fs-s: 16px;
+      --fs-m: 19px;
+      --fs-l: clamp(24px, 2.4vw, 30px);
+      --fs-xl: clamp(34px, 4.4vw, 52px);
+      --fs-xxl: clamp(46px, 7.4vw, 96px);
+      --display: "Bodoni Moda", Georgia, serif;
+      --arabic: "El Messiri", sans-serif;
+      --text: "Jost", system-ui, sans-serif;
+
+      /* Spacing, shape, depth */
+      --s1: 8px; --s2: 12px; --s3: 16px; --s4: 24px; --s5: 36px; --s6: 56px;
+      --r-m: 18px; --r-pill: 999px;
+      --glow-rose: 0 0 26px rgba(242, 167, 160, 0.45);
+      --glow-champagne: 0 0 26px rgba(246, 223, 176, 0.45);
+
+      /* Motion */
       --m150: 150ms; --m200: 200ms; --m300: 300ms;
       --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
       --gutter: max(5vw, 18px);
+      --scene-h: 0px;         /* set by script; used to keep content clear of the pinned scene */
     }
+
+    /* ---------- Base ---------- */
     * { box-sizing: border-box; min-width: 0; }
     [hidden] { display: none !important; }
-    body { margin: 0; color: var(--cream); background: var(--plum-deep); font: 400 17px/1.6 "Jost", system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    body { margin: 0; color: var(--cream); background: var(--plum-deep); font: 400 17px/1.6 var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    a, button, label { -webkit-tap-highlight-color: transparent; }
     .wrap { max-width: 1160px; margin: 0 auto; padding-left: max(var(--gutter), env(safe-area-inset-left)); padding-right: max(var(--gutter), env(safe-area-inset-right)); }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-    .top { background: var(--plum); padding-top: max(36px, env(safe-area-inset-top)); padding-bottom: 4px; transition: background-color 2.5s ease-out; }
-    body.dawn .top { background: #3d1844; }
-    .top .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; align-items: end; }
-    .ar { margin: 0; font-family: "El Messiri", sans-serif; font-weight: 600; font-size: 32px; line-height: 1.3; color: var(--rose); direction: rtl; text-align: left; }
-    h1 { margin: 4px 0 0; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: clamp(48px, 7.4vw, 96px); line-height: 0.98; letter-spacing: -0.02em; color: var(--champagne); }
-    .lede { margin: 16px 0 0; max-width: 32em; font-size: 18px; color: var(--soft); }
+    /* ---------- Header ---------- */
+    .top { background: var(--plum); padding-top: max(var(--s5), env(safe-area-inset-top)); padding-bottom: var(--s1); transition: background-color 2.5s ease-out; }
+    body.dawn .top { background: var(--dusk); }
+    .top .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s5); align-items: end; }
+    .ar { margin: 0; font-family: var(--arabic); font-weight: 600; font-size: 32px; line-height: 1.3; color: var(--rose); direction: rtl; text-align: left; }
+    /* Heavier weight + small optical size keeps Bodoni's hairlines visible on dark;
+       bottom padding stops the shimmer from clipping the tail of "Aya". */
+    h1 { margin: 4px 0 -0.12em; padding: 0 0.08em 0.14em 0; font-family: var(--display); font-style: italic; font-weight: 600; font-variation-settings: "opsz" 30; font-size: var(--fs-xxl); line-height: 0.98; letter-spacing: -0.02em; color: var(--champagne); }
+    .lede { margin: var(--s3) 0 0; max-width: 32em; font-size: 18px; color: var(--soft); }
+
     .count { justify-self: end; text-align: right; }
-    .count-label { margin: 0 0 8px; font-size: 15px; color: var(--soft); }
+    .count-label { margin: 0 0 var(--s1); font-size: 15px; color: var(--soft); }
     .digits { display: flex; gap: 18px; justify-content: flex-end; }
     .digits div { display: flex; flex-direction: column; align-items: flex-end; }
-    .digits b { font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: clamp(34px, 4vw, 52px); line-height: 1; color: var(--cream); font-variant-numeric: tabular-nums; }
+    .digits b { font-family: var(--display); font-style: italic; font-weight: 600; font-variation-settings: "opsz" 24; font-size: clamp(34px, 4vw, 52px); line-height: 1; color: var(--cream); font-variant-numeric: tabular-nums; }
     .digits span { font-size: 13px; color: var(--soft); margin-top: 4px; }
-    .newyear { margin: 0; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-size: clamp(26px, 3vw, 36px); color: var(--champagne); }
+    .digits b.flip { animation: flip var(--m300) var(--ease-out); }
+    .newyear { margin: 0; font-family: var(--display); font-style: italic; font-size: clamp(26px, 3vw, 36px); color: var(--champagne); }
 
-    .scenewrap { position: relative; overflow: hidden; }
+    /* Page-load entrance + gold shimmer on the title */
+    .rise { opacity: 0; animation: rise var(--m300) var(--ease-out) forwards; }
+    .rise-2 { animation-delay: var(--m150); }
+    .rise-3 { animation-delay: var(--m300); }
+    h1.rise {
+      background: linear-gradient(100deg, var(--champagne) 42%, #fffaf0 50%, var(--champagne) 58%);
+      background-size: 260% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: rise var(--m300) var(--ease-out) var(--m150) forwards, shimmer 7s linear 1.2s infinite;
+    }
+
+    /* ---------- The scene (pinned on every screen so each tick is visible) ---------- */
+    .scenewrap { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; overflow: hidden; cursor: pointer; box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.75); }
     #scene { display: block; width: 100%; }
     #fw, #snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
-    /* The living night: slow ambient motion inside the scene */
+    .scene-pills { position: absolute; top: var(--s2); left: var(--s2); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; pointer-events: none; }
+    .pill { margin: 0; padding: 6px var(--s2); border-radius: var(--r-pill); background: rgba(23, 8, 32, 0.72); color: var(--champagne); font-size: var(--fs-xs); font-weight: 500; white-space: nowrap; transition: opacity var(--m300) var(--ease-out); }
+    .scene-progress { display: none; }
+    .sky-hint.gone { opacity: 0; }
+
+    .bigcount { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; font-family: var(--display); font-style: italic; font-weight: 700; font-variation-settings: "opsz" 24; font-size: clamp(88px, 18vw, 200px); line-height: 1; color: var(--champagne); text-shadow: 0 0 40px rgba(246, 223, 176, 0.6); }
+    .bigcount.pop { animation: pop 900ms var(--ease-out); }
+
+    /* Ambient night */
     .tw { animation: twinkle var(--d, 3s) ease-in-out var(--dl, 0s) infinite; }
-    @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
-    #moonGlow { animation: breathe 6s ease-in-out infinite; }
-    .lampglow { animation: breathe 4.5s ease-in-out infinite; }
-    @keyframes breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+    #moonGlow, .lampglow { animation: breathe 5s ease-in-out infinite; }
     .cloud { animation: drift linear infinite; }
-    @keyframes drift { from { transform: translateX(var(--from)); } to { transform: translateX(var(--to)); } }
     #shooter { opacity: 0; }
     #shooter.go { animation: shoot 1.1s ease-out; }
-    @keyframes shoot { 0% { opacity: 0; transform: translate(0, 0); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(320px, 74px); } }
     #windows rect { transition: opacity 0.8s ease; }
     #windows rect.off { opacity: 0.1; }
-    .puff { opacity: 0; transform-box: fill-box; transform-origin: center; animation: puff 3.6s ease-out infinite; }
-    @keyframes puff { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 20% { opacity: 0.45; } 100% { opacity: 0; transform: translate(7px, -36px) scale(2.3); } }
-    .bob { animation: bob 3.8s ease-in-out infinite; }
-    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    .puff { opacity: 0; transform-box: fill-box; transform-origin: center; animation: puff 4s ease-out infinite; }
     #carIdle { animation: idle 1.4s ease-in-out infinite; }
-    @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.3px); } }
     .flick { animation: flick 3.2s ease-in-out infinite; }
-    @keyframes flick { 0%, 100% { opacity: 1; } 50% { opacity: 0.78; } }
-    .digits b.flip { animation: flip var(--m300) var(--ease-out); }
-    @keyframes flip { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
+    /* Her Mini */
     #car { transition: transform var(--m300) var(--ease-out); }
     #car.drive { transition: transform 1.3s var(--ease-out); }
     .wheel-spin { transform-box: fill-box; transform-origin: center; }
     #car.moving .wheel-spin { animation: spin var(--spin, 300ms) var(--ease-out); }
-    @keyframes spin { to { transform: rotate(720deg); } }
     .beam { transition: opacity var(--m300) var(--ease-out); }
     #car.parked .beam { opacity: 0; }
 
-    .lantern { opacity: 0.22; transition: opacity var(--m300) var(--ease-out); }
-    .lantern .icon { opacity: 0; transform: scale(0.5); transform-box: fill-box; transform-origin: center; transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
-    .lantern.lit { opacity: 1; }
-    .lantern.lit .icon { opacity: 1; transform: none; }
+    /* Paper lanterns on the string of lights: a faint outline until the wish comes true */
+    .lantern { color: var(--champagne); --lan-hole: var(--plum); }
+    .lantern .bob { animation: bob 3.8s ease-in-out infinite; }
+    .lan-body { fill: var(--plum); stroke: currentColor; stroke-opacity: 0.45; stroke-width: 1.2; transition: fill var(--m300) var(--ease-out); }
+    .lan-rib { fill: none; stroke: currentColor; stroke-opacity: 0.22; stroke-width: 0.9; }
+    .lan-cap { fill: var(--wine); }
+    .lan-glow { opacity: 0; transition: opacity var(--m300) var(--ease-out); }
+    .lantern .icon { opacity: 0.38; transition: opacity var(--m300) var(--ease-out); }
+    .lantern.lit { color: var(--plum); --lan-hole: #f7c88f; }
+    .lantern.lit .lan-body { fill: url(#lanternLit); stroke: var(--champagne); stroke-opacity: 0.9; }
+    .lantern.lit .lan-rib { stroke-opacity: 0.3; }
+    .lantern.lit .lan-glow, .lantern.lit .icon { opacity: 1; }
+    .lantern .ping { opacity: 0; fill: none; stroke: var(--champagne); stroke-width: 1.4; transform-box: fill-box; transform-origin: center; }
+    .lantern.pop .ping { animation: ping var(--m300) var(--ease-out); }
+    .garland { fill: none; stroke: var(--champagne); stroke-opacity: 0.35; stroke-width: 1; }
+    .bulb-a { fill: var(--champagne); }
+    .bulb-b { fill: var(--rose); }
 
+    /* The ending */
     #walkers { transition: transform 1.6s linear, opacity var(--m300) var(--ease-out); opacity: 0; }
     #walkers.show { opacity: 1; }
-
     .home-glow { opacity: 0.35; transition: opacity var(--m300) var(--ease-out); }
     body.forever .home-glow { opacity: 0.95; }
     .dawn-sky { opacity: 0; transition: opacity 2.6s ease-out; }
@@ -96,98 +161,115 @@
     #windows { transition: opacity 2.6s ease-out; }
     body.dawn #windows { opacity: 0.35; }
 
+    /* ---------- Colour picker strip ---------- */
     .strip { background: var(--plum-deep); border-bottom: 1px solid var(--line); }
-    .strip .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 16px; }
+    .strip .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); flex-wrap: wrap; padding-block: var(--s3); }
     .picker { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .picker p { margin: 0; font-size: 15px; color: var(--soft); }
     .swatches { display: flex; gap: 10px; }
-    .swatch { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--plum-deep); box-shadow: 0 0 0 1px rgba(246, 223, 176, 0.35); padding: 0; cursor: pointer; transition: transform var(--m150) var(--ease-out); }
-    @media (hover: hover) { .swatch:hover { transform: scale(1.08); } }
-    .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--champagne); }
+    .swatch { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--plum-deep); box-shadow: 0 0 0 1.5px rgba(246, 223, 176, 0.6); padding: 0; cursor: pointer; transition: transform var(--m150) var(--ease-out), box-shadow var(--m150) var(--ease-out); }
+    .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--champagne), var(--glow-champagne); }
     .swatch:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
+    @media (hover: hover) { .swatch:hover { transform: scale(1.08); } }
     .progress { margin: 0; font-weight: 500; color: var(--champagne); white-space: nowrap; }
 
+    /* ---------- Promise + wishes ---------- */
     .wishes { padding-block: clamp(36px, 5vw, 64px) clamp(44px, 6vw, 84px); }
-    h2 { margin: 0; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: clamp(34px, 4.4vw, 52px); line-height: 1.05; color: var(--champagne); }
-    .wishes .sub { margin: 10px 0 0; color: var(--soft); max-width: 36em; }
-    .promise-note { margin: 0 0 40px; padding: 24px 28px; border-radius: 20px; border: 1.5px solid var(--rose); background: rgba(242, 167, 160, 0.08); display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px 32px; align-items: center; }
-    .promise-en { margin: 0; font-size: 19px; color: var(--cream); }
-    .promise-en strong { display: block; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: 30px; line-height: 1.1; color: var(--rose); margin-bottom: 6px; }
-    .promise-ar { margin: 0; font-family: "El Messiri", sans-serif; font-weight: 600; font-size: 24px; line-height: 1.6; color: var(--champagne); direction: rtl; text-align: right; }
-    @media (max-width: 760px) { .promise-note { grid-template-columns: minmax(0, 1fr); } .promise-ar { text-align: left; } }
+    .promise-note { position: relative; margin: 0 0 40px; padding: var(--s4) 28px; border-radius: var(--r-m); border: 1.5px solid var(--rose); background: rgba(242, 167, 160, 0.08); }
+    .promise-note::before { content: ""; position: absolute; inset: -1.5px; border-radius: inherit; box-shadow: var(--glow-rose); opacity: 0; pointer-events: none; animation: breathe 4s ease-in-out infinite; }
+    .promise-before, .promise-after { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--s2) 32px; align-items: center; }
+    .promise-after { display: none; }
+    body.midnight .promise-before { display: none; }
+    body.midnight .promise-after { display: grid; }
+    body.midnight .promise-note { border-color: var(--champagne); background: rgba(246, 223, 176, 0.08); }
+    body.midnight .promise-note::before { animation: none; opacity: 1; box-shadow: var(--glow-champagne); }
+    .promise-en { margin: 0; font-size: var(--fs-m); color: var(--cream); }
+    .promise-en strong { display: block; margin-bottom: 6px; font-family: var(--display); font-style: italic; font-weight: 500; font-size: var(--fs-l); line-height: 1.1; color: var(--rose); }
+    body.midnight .promise-en strong { color: var(--champagne); }
+    .promise-ar { margin: 0; font-family: var(--arabic); font-weight: 600; font-size: 24px; line-height: 1.6; color: var(--champagne); direction: rtl; text-align: right; }
+
+    h2 { margin: 0; font-family: var(--display); font-style: italic; font-weight: 500; font-size: var(--fs-xl); line-height: 1.05; color: var(--champagne); }
+    .sub { margin: 10px 0 0; color: var(--soft); max-width: 36em; }
     .items { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 44px; }
-    .item { display: flex; gap: 16px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+    .item { position: relative; display: flex; gap: var(--s3); align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--line); cursor: pointer; scroll-margin-top: calc(var(--scene-h) + var(--s4)); }
+    .item::after { content: ""; position: absolute; inset: 0 -12px; border-radius: 14px; background: rgba(246, 223, 176, 0.12); opacity: 0; pointer-events: none; }
+    .item.just::after { animation: flash var(--m300) var(--ease-out); }
     .item input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-    .tick { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid rgba(246, 223, 176, 0.5); display: grid; place-items: center; margin-top: 3px; transition: background-color var(--m200) var(--ease-out), border-color var(--m200) var(--ease-out); }
+    .tick { flex: none; width: 32px; height: 32px; margin-top: 3px; border-radius: 50%; border: 1.5px solid rgba(246, 223, 176, 0.5); display: grid; place-items: center; transition: background-color var(--m200) var(--ease-out), border-color var(--m200) var(--ease-out); }
     .tick svg { opacity: 0; transform: scale(0.6); transition: opacity var(--m200) var(--ease-out), transform var(--m200) var(--ease-out); }
     .item input:checked + .tick { background: var(--champagne); border-color: var(--champagne); }
     .item input:checked + .tick svg { opacity: 1; transform: none; }
     .item input:focus-visible + .tick { outline: 2px solid var(--rose); outline-offset: 3px; }
-    .t b { display: block; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: 24px; line-height: 1.2; color: var(--cream); }
-    .t span { display: block; margin-top: 4px; color: var(--soft); font-size: 16px; }
+    .t b { display: block; font-family: var(--display); font-style: italic; font-weight: 500; font-size: 24px; line-height: 1.2; color: var(--cream); }
+    .t span { display: block; margin-top: 4px; color: var(--soft); font-size: var(--fs-s); }
     .item input:checked ~ .t b { color: var(--champagne); }
 
-    .note { margin: 36px 0 0; padding: 26px 28px; border-radius: 20px; background: linear-gradient(120deg, rgba(242, 167, 160, 0.18), rgba(246, 223, 176, 0.12)); box-shadow: inset 0 0 0 1px var(--line); font-size: 19px; opacity: 0; transform: translateY(8px); transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    /* Final message after sunrise */
+    .note { margin: var(--s5) 0 0; padding: 26px 28px; border-radius: var(--r-m); background: linear-gradient(120deg, rgba(242, 167, 160, 0.18), rgba(246, 223, 176, 0.12)); box-shadow: inset 0 0 0 1px var(--line); font-size: var(--fs-m); opacity: 0; transform: translateY(8px); transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); scroll-margin-top: calc(var(--scene-h) + var(--s4)); }
     body.dawn .note { opacity: 1; transform: none; }
-    .note strong { display: block; font-family: "Bodoni Moda", Georgia, serif; font-style: italic; font-weight: 500; font-size: 32px; line-height: 1.1; color: var(--champagne); margin-bottom: 6px; }
-    .note .ar2 { display: block; margin-top: 10px; font-family: "El Messiri", sans-serif; font-weight: 600; font-size: 26px; color: var(--rose); direction: rtl; text-align: left; }
-    .replay { margin-top: 18px; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--champagne); color: var(--plum); font: 500 16px/1 "Jost", sans-serif; cursor: pointer; transition: background-color var(--m150) var(--ease-out); }
+    .note strong { display: block; margin-bottom: 6px; font-family: var(--display); font-style: italic; font-weight: 500; font-size: 32px; line-height: 1.1; color: var(--champagne); }
+    .note .ar2 { display: block; margin-top: 10px; font-family: var(--arabic); font-weight: 600; font-size: 26px; color: var(--rose); direction: rtl; text-align: left; }
+    .replay { margin-top: 18px; min-height: 48px; padding: 0 22px; border: 0; border-radius: var(--r-pill); background: var(--champagne); color: var(--plum); font: 500 var(--fs-s)/1 var(--text); cursor: pointer; transition: background-color var(--m150) var(--ease-out); }
     .replay:hover { background: #fff0cc; }
     .replay:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
 
     footer { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
-    footer a { color: var(--champagne); }
+    footer a { display: inline-block; padding: var(--s2) 0; color: var(--champagne); }
 
-    /* Touch and motion polish */
-    a, button, label, .item { -webkit-tap-highlight-color: transparent; }
-    .rise { opacity: 0; animation: rise var(--m300) var(--ease-out) forwards; }
-    .rise-2 { animation-delay: var(--m150); }
-    .rise-3 { animation-delay: var(--m300); }
-    h1.rise {
-      background: linear-gradient(100deg, var(--champagne) 42%, #fffaf0 50%, var(--champagne) 58%);
-      background-size: 260% 100%;
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      animation: rise var(--m300) var(--ease-out) var(--m150) forwards, shimmer 7s linear 1.2s infinite;
-    }
-    @keyframes shimmer { from { background-position: 130% 0; } to { background-position: -130% 0; } }
-    .promise-note { position: relative; }
-    .promise-note::before { content: ""; position: absolute; inset: -1.5px; border-radius: 21px; box-shadow: 0 0 26px rgba(242, 167, 160, 0.45); opacity: 0; pointer-events: none; animation: breathe 4s ease-in-out infinite; }
+    /* ---------- Keyframes ---------- */
     @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    .item { position: relative; }
-    .item::after { content: ""; position: absolute; inset: 0 -12px; border-radius: 14px; background: rgba(246, 223, 176, 0.12); opacity: 0; pointer-events: none; }
-    .item.just::after { animation: flash var(--m300) var(--ease-out); }
-    @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
-    .lantern .ping { opacity: 0; transform-box: fill-box; transform-origin: center; }
-    .lantern.pop .ping { animation: ping var(--m300) var(--ease-out); }
+    @keyframes shimmer { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+    @keyframes flip { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+    @keyframes pop { 0% { opacity: 0; transform: scale(1.5); } 20% { opacity: 1; transform: scale(1); } 75% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.94); } }
+    @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+    @keyframes breathe { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+    @keyframes drift { from { transform: translateX(var(--from)); } to { transform: translateX(var(--to)); } }
+    @keyframes shoot { 0% { opacity: 0; transform: translate(0, 0); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(320px, 74px); } }
+    @keyframes puff { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 20% { opacity: 0.8; } 100% { opacity: 0; transform: translate(9px, -40px) scale(2.6); } }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+    @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.3px); } }
+    @keyframes flick { 0%, 100% { opacity: 1; } 50% { opacity: 0.78; } }
+    @keyframes spin { to { transform: rotate(720deg); } }
     @keyframes ping { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(2.2); } }
-    .scene-progress { display: none; }
-    footer a { display: inline-block; padding: 12px 0; }
+    @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 
-    /* Phones: keep the scene pinned so every tick shows the car move */
+    /* ---------- Phones (one breakpoint) ---------- */
     @media (max-width: 767.98px) {
-      .top { padding-top: max(24px, env(safe-area-inset-top)); }
-      .ar { font-size: 26px; }
-      .lede { font-size: 16px; margin-top: 10px; }
-      .scenewrap { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.7); }
-      .scene-progress { display: block; position: absolute; right: 10px; bottom: 8px; margin: 0; padding: 6px 12px; border-radius: 999px; background: rgba(23, 8, 32, 0.78); color: var(--champagne); font-size: 14px; font-weight: 500; white-space: nowrap; }
-      .strip .wrap { padding-block: 12px; }
+      .top { padding-top: max(20px, env(safe-area-inset-top)); }
+      .top .wrap { grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
+      .ar { font-size: 24px; }
+      h1 { font-size: clamp(40px, 11vw, 54px); }
+      .lede { font-size: 15px; margin-top: var(--s1); }
+      .count { justify-self: start; text-align: left; display: flex; align-items: center; gap: var(--s3); }
+      .count-label { margin: 0; max-width: 5em; line-height: 1.25; }
+      .digits { gap: var(--s3); justify-content: flex-start; }
+      .digits div { align-items: flex-start; }
+      .digits b { font-size: 30px; }
+      .digits span { font-size: 12px; }
+      .scene-progress { display: block; }
+      .scene-pills { top: var(--s1); left: var(--s1); flex-direction: row; flex-wrap: wrap; }
+      .pill { padding: 4px 10px; font-size: 13px; }
+      .strip .wrap { padding-block: var(--s2); }
+      .strip .progress { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       .wishes { padding-top: 28px; }
+      .promise-before, .promise-after { grid-template-columns: minmax(0, 1fr); }
+      .promise-ar { text-align: left; }
+      .items { grid-template-columns: minmax(0, 1fr); }
       .item { padding: 18px 0; }
       .t b { font-size: 22px; }
     }
 
-    @media (max-width: 760px) {
-      .top .wrap { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-      .count { justify-self: start; text-align: left; }
-      .digits, .digits div { justify-content: flex-start; align-items: flex-start; }
-      .items { grid-template-columns: minmax(0, 1fr); }
+    /* ---------- Accessibility fallbacks ---------- */
+    @media (forced-colors: active) {
+      h1.rise { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+    }
+    @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+      h1.rise { background: none; color: var(--champagne); }
     }
     @media (prefers-reduced-motion: reduce) {
-      #car, #car.drive, .beam, .lantern, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch { transition: none; }
-      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping { animation: none; }
+      #car, #car.drive, .beam, .lan-body, .lan-glow, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch, .pill, #windows rect { transition: none; }
+      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping, .tw, #moonGlow, .lampglow, .cloud, .puff, .lantern .bob, #carIdle, .flick, .digits b.flip, .promise-note::before, .bigcount.pop { animation: none; }
       .rise, h1.rise { animation: none; opacity: 1; }
-      .tw, #moonGlow, .lampglow, .cloud, .puff, .bob, #carIdle, .flick, .digits b.flip, .promise-note::before { animation: none; }
-      #windows rect { transition: none; }
     }
   </style>
 </head>
@@ -213,7 +295,7 @@
   </header>
 
   <div class="scenewrap" id="wrap">
-    <svg id="scene" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Your Mini Cooper driving through New Year's night toward our home">
+    <svg id="scene" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Your Mini Cooper driving through New Year's night toward our home, under a string of lantern lights">
       <defs>
         <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1036"/><stop offset="0.62" stop-color="#4a1b4f"/><stop offset="1" stop-color="#b8606e"/></linearGradient>
         <linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b2a6b"/><stop offset="0.5" stop-color="#e58f8c"/><stop offset="1" stop-color="#ffd59a"/></linearGradient>
@@ -222,54 +304,68 @@
         <linearGradient id="beamg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff3cf" stop-opacity="0.55"/><stop offset="1" stop-color="#fff3cf" stop-opacity="0"/></linearGradient>
         <radialGradient id="moonglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#f6dfb0" stop-opacity="0.35"/><stop offset="1" stop-color="#f6dfb0" stop-opacity="0"/></radialGradient>
         <linearGradient id="shootg" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff6ea"/><stop offset="1" stop-color="#fff6ea" stop-opacity="0"/></linearGradient>
+        <radialGradient id="cloudg" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#f6dfb0" stop-opacity="0.13"/><stop offset="1" stop-color="#f6dfb0" stop-opacity="0"/></radialGradient>
+        <radialGradient id="smokeg" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#cdb6c9" stop-opacity="0.55"/><stop offset="1" stop-color="#cdb6c9" stop-opacity="0"/></radialGradient>
+        <radialGradient id="lanternLit" cx="0.45" cy="0.4" r="0.65"><stop offset="0" stop-color="#fff3d1"/><stop offset="0.55" stop-color="#f9cf92"/><stop offset="1" stop-color="#e98f86"/></radialGradient>
       </defs>
       <rect id="skyN" width="1000" height="300" fill="url(#night)"/>
       <rect id="skyD" class="dawn-sky" width="1000" height="300" fill="url(#dawn)"/>
-      <g id="stars" class="night-only" fill="#fff6ea"></g>
-      <g id="clouds" class="night-only" fill="#f6dfb0"></g>
-      <g class="night-only"><g id="shooterPos"><g id="shooter"><line x1="0" y1="0" x2="-70" y2="-16" stroke="url(#shootg)" stroke-width="1.6" stroke-linecap="round"/></g></g></g>
-      <g class="night-only"><circle id="moonGlow" r="64" fill="url(#moonglow)"/></g>
-      <path id="moon" class="night-only" fill="#f6dfb0"/>
-      <g id="sun"><circle id="sunGlow" r="90" fill="url(#sunglow)"/><circle id="sunDisc" r="34" fill="#ffd27a"/></g>
-      <g id="skyline" fill="#1f0b28"></g>
-      <g id="windows" fill="#f6dfb0"></g>
+      <!-- Far layer (moves most with the pointer) -->
+      <g id="far">
+        <g id="stars" class="night-only" style="fill: var(--cream)"></g>
+        <g id="clouds" class="night-only"></g>
+        <g class="night-only"><g id="shooterPos"><g id="shooter"><line x1="0" y1="0" x2="-70" y2="-16" stroke="url(#shootg)" stroke-width="1.6" stroke-linecap="round"/></g></g></g>
+        <g class="night-only"><circle id="moonGlow" r="64" fill="url(#moonglow)"/></g>
+        <path id="moon" class="night-only" style="fill: var(--champagne)"/>
+      </g>
+      <g id="sun"><circle id="sunGlow" r="90" fill="url(#sunglow)"/><circle id="sunDisc" r="34" style="fill: var(--gold)"/></g>
+      <!-- Middle layer -->
+      <g id="mid">
+        <g id="skyline" style="fill: #1f0b28"></g>
+        <g id="windows" style="fill: var(--champagne)"></g>
+      </g>
       <g id="house"></g>
-      <rect id="road" y="256" width="1000" height="44" fill="#140716"/>
-      <g id="dashes" fill="#f6dfb0" opacity="0.55"></g>
+      <rect id="road" y="256" width="1000" height="44" style="fill: #140716"/>
+      <g id="dashes" style="fill: var(--champagne)" opacity="0.55"></g>
       <g id="lamps"></g>
+      <g id="garland"></g>
       <g id="lanterns"></g>
       <g transform="translate(0 256)"><g id="walkers">
-        <circle cx="0" cy="-31" r="4.6" fill="#fff6ea"/>
-        <path d="M-5 -26 H5 L7 -8 H-7 Z" fill="#fff6ea"/>
-        <rect x="-5" y="-8" width="3.5" height="8" fill="#fff6ea"/><rect x="1.5" y="-8" width="3.5" height="8" fill="#fff6ea"/>
-        <circle cx="15" cy="-29" r="4.3" fill="#f2a7a0"/>
-        <path d="M10.6 -31 Q15 -38 19.4 -31 L20 -22 Q15 -24 10 -22 Z" fill="#7a3550"/>
-        <path d="M10 -24 H20 L24 -2 H6 Z" fill="#f2a7a0"/>
-        <path d="M6 -15 Q8 -13 10 -15" stroke="#fff6ea" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="0" cy="-31" r="4.6" style="fill: var(--cream)"/>
+        <path d="M-5 -26 H5 L7 -8 H-7 Z" style="fill: var(--cream)"/>
+        <rect x="-5" y="-8" width="3.5" height="8" style="fill: var(--cream)"/><rect x="1.5" y="-8" width="3.5" height="8" style="fill: var(--cream)"/>
+        <circle cx="15" cy="-29" r="4.3" style="fill: var(--rose)"/>
+        <path d="M10.6 -31 Q15 -38 19.4 -31 L20 -22 Q15 -24 10 -22 Z" style="fill: var(--wine)"/>
+        <path d="M10 -24 H20 L24 -2 H6 Z" style="fill: var(--rose)"/>
+        <path d="M6 -15 Q8 -13 10 -15" style="stroke: var(--cream)" stroke-width="2" fill="none" stroke-linecap="round"/>
       </g></g>
       <g id="car" style="transform: translateX(-260px)">
         <g transform="translate(0 196) scale(0.82)">
           <g class="beam"><path class="flick" d="M166 40 L330 22 L330 70 L166 54 Z" fill="url(#beamg)"/></g>
           <ellipse cx="88" cy="70" rx="80" ry="5" fill="#000" opacity="0.35"/>
           <g id="carIdle">
-          <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" fill="var(--mini)"/>
-          <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" fill="#170820" opacity="0.22"/>
-          <path d="M54 19 Q57 9 67 9 L117 9 Q127 9 130 19 Z" fill="#fff6ea"/>
-          <path d="M60 22 L84 22 L84 34 L49 34 Z" fill="#f6dfb0" opacity="0.85"/>
-          <path d="M90 22 L123 22 L136 34 L90 34 Z" fill="#f6dfb0" opacity="0.85"/>
-          <circle cx="161" cy="46" r="5.5" fill="#fff3cf"/>
-          <rect x="9" y="42" width="5" height="9" rx="2" fill="#ff4d6d"/>
-          <rect x="6" y="56" width="16" height="5" rx="2.5" fill="#cdb6c9"/>
-          <rect x="152" y="56" width="18" height="5" rx="2.5" fill="#cdb6c9"/>
+            <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" style="fill: var(--mini)"/>
+            <path d="M8 52 Q8 38 22 36 L40 34 L52 18 Q56 12 64 12 L120 12 Q128 12 132 18 L144 34 L158 38 Q168 40 168 52 L168 60 Q168 66 162 66 L14 66 Q8 66 8 60 Z" style="fill: var(--plum-deep)" opacity="0.22"/>
+            <path d="M54 19 Q57 9 67 9 L117 9 Q127 9 130 19 Z" style="fill: var(--cream)"/>
+            <path d="M60 22 L84 22 L84 34 L49 34 Z" style="fill: var(--champagne)" opacity="0.85"/>
+            <path d="M90 22 L123 22 L136 34 L90 34 Z" style="fill: var(--champagne)" opacity="0.85"/>
+            <circle cx="161" cy="46" r="5.5" style="fill: #fff3cf"/>
+            <rect x="9" y="42" width="5" height="9" rx="2" style="fill: #ff4d6d"/>
+            <rect x="6" y="56" width="16" height="5" rx="2.5" style="fill: var(--soft)"/>
+            <rect x="152" y="56" width="18" height="5" rx="2.5" style="fill: var(--soft)"/>
           </g>
-          <g class="wheel-spin"><circle cx="42" cy="66" r="14" fill="#120610"/><circle cx="42" cy="66" r="6" fill="#cdb6c9"/><path d="M42 54 V78 M30 66 H54" stroke="#8d7a8a" stroke-width="2"/></g>
-          <g class="wheel-spin"><circle cx="134" cy="66" r="14" fill="#120610"/><circle cx="134" cy="66" r="6" fill="#cdb6c9"/><path d="M134 54 V78 M122 66 H146" stroke="#8d7a8a" stroke-width="2"/></g>
+          <g class="wheel-spin"><circle cx="42" cy="66" r="14" style="fill: #120610"/><circle cx="42" cy="66" r="6" style="fill: var(--soft)"/><path d="M42 54 V78 M30 66 H54" style="stroke: #8d7a8a" stroke-width="2"/></g>
+          <g class="wheel-spin"><circle cx="134" cy="66" r="14" style="fill: #120610"/><circle cx="134" cy="66" r="6" style="fill: var(--soft)"/><path d="M134 54 V78 M122 66 H146" style="stroke: #8d7a8a" stroke-width="2"/></g>
         </g>
       </g>
     </svg>
     <canvas id="snow" aria-hidden="true"></canvas>
     <canvas id="fw" aria-hidden="true"></canvas>
-    <p class="scene-progress" id="sceneProgress" aria-hidden="true">0 of 8</p>
+    <div class="bigcount" id="bigcount" aria-hidden="true"></div>
+    <div class="scene-pills" aria-hidden="true">
+      <p class="pill scene-progress" id="sceneProgress">0 of 8</p>
+      <p class="pill sky-hint" id="skyHint">Tap the sky for fireworks</p>
+    </div>
   </div>
 
   <div class="strip">
@@ -284,9 +380,15 @@
 
   <main class="wishes">
     <div class="wrap">
-      <div class="promise-note">
-        <p class="promise-en"><strong>Aya, promise me</strong>you won't tick a single wish until New Year's night. Wait for midnight, then make every one of them come true with me.</p>
-        <p class="promise-ar" lang="ar">وعديني يا آية، ما تكبسي على ولا أمنية قبل ليلة راس السنة</p>
+      <div class="promise-note" aria-live="polite">
+        <div class="promise-before">
+          <p class="promise-en"><strong>Aya, promise me</strong>you won't tick a single wish until New Year's night. Wait for midnight, then make every one of them come true with me.</p>
+          <p class="promise-ar" lang="ar">وعديني يا آية، ما تكبسي على ولا أمنية قبل ليلة راس السنة</p>
+        </div>
+        <div class="promise-after">
+          <p class="promise-en"><strong>It's time, my love</strong>It's New Year's night. Tick every wish, one by one, and let's make them come true together.</p>
+          <p class="promise-ar" lang="ar">حان الوقت يا آية، يلّا نحقق كل أمنياتنا سوا</p>
+        </div>
       </div>
       <h2>Everything I wish for us</h2>
       <p class="sub">On New Year's night, tick each one. Every wish lights a lantern over the road, and your Mini brings us a little closer to home.</p>
@@ -306,6 +408,7 @@
 
   <script>
   {
+    // ---------- Content ----------
     const wishes = [
       ["Our own home", "A door with both our names on it, and a light I can see from down the street that means you're waiting for me."],
       ["A new phone for you", "So that \"good morning, my love\" is the first thing you see, every single day."],
@@ -316,50 +419,64 @@
       ["Grow old together", "Still dancing in our kitchen when our hair is grey."],
       ["Happy, together, forever", "The one wish I make every year, and the one I'll always keep."]
     ];
+    // Lantern icons draw in currentColor, so they read on both the dark (unlit) and warm (lit) lantern
     const icons = [
-      '<path d="M-7 1 L0 -6 L7 1 M-5 -1 V7 H5 V-1" fill="none" stroke="#f6dfb0" stroke-width="1.6" stroke-linejoin="round"/>',
-      '<rect x="-4" y="-7" width="8" height="14" rx="2" fill="none" stroke="#f6dfb0" stroke-width="1.6"/><circle cy="4.5" r="0.9" fill="#f6dfb0"/>',
-      '<path d="M-8 3 Q-8 0 -5 0 L-3 -4 H3 L5 0 Q8 0 8 3 V5 H-8 Z" fill="#f6dfb0"/><circle cx="-4.5" cy="5.5" r="2" fill="#2b1036" stroke="#f6dfb0" stroke-width="1"/><circle cx="4.5" cy="5.5" r="2" fill="#2b1036" stroke="#f6dfb0" stroke-width="1"/>',
-      '<circle cx="-5" cy="-3" r="2.2" fill="#f6dfb0"/><circle cx="5" cy="-3" r="2.2" fill="#f6dfb0"/><circle cx="0" cy="0" r="1.7" fill="#f2a7a0"/><path d="M-8 6 Q-5 0 -2 6 M2 6 Q5 0 8 6 M-2 7 Q0 3 2 7" fill="none" stroke="#f6dfb0" stroke-width="1.5"/>',
-      '<circle r="7" fill="none" stroke="#f6dfb0" stroke-width="1.5"/><ellipse rx="3" ry="7" fill="none" stroke="#f6dfb0" stroke-width="1.2"/><path d="M-7 0 H7" stroke="#f6dfb0" stroke-width="1.2"/>',
-      '<path d="M1 -7 A7 7 0 1 0 7 2 A5.5 5.5 0 1 1 1 -7 Z" fill="#f6dfb0"/><circle cx="6" cy="-5" r="1" fill="#f6dfb0"/>',
-      '<circle cx="-3" r="4.2" fill="none" stroke="#f6dfb0" stroke-width="1.5"/><circle cx="3" r="4.2" fill="none" stroke="#f2a7a0" stroke-width="1.5"/>',
-      '<path d="M0 0 C-3 -5 -9 -5 -9 0 C-9 5 -3 5 0 0 C3 -5 9 -5 9 0 C9 5 3 5 0 0 Z" fill="none" stroke="#f6dfb0" stroke-width="1.6"/>'
+      '<path d="M-7 1 L0 -6 L7 1 M-5 -1 V7 H5 V-1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+      '<rect x="-4" y="-7" width="8" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cy="4.5" r="0.9" fill="currentColor"/>',
+      '<path d="M-8 3 Q-8 0 -5 0 L-3 -4 H3 L5 0 Q8 0 8 3 V5 H-8 Z" fill="currentColor"/><circle cx="-4.5" cy="5.5" r="2" style="fill: var(--lan-hole)" stroke="currentColor" stroke-width="1"/><circle cx="4.5" cy="5.5" r="2" style="fill: var(--lan-hole)" stroke="currentColor" stroke-width="1"/>',
+      '<circle cx="-5" cy="-3" r="2.2" fill="currentColor"/><circle cx="5" cy="-3" r="2.2" fill="currentColor"/><circle cx="0" cy="0" r="1.7" fill="currentColor"/><path d="M-8 6 Q-5 0 -2 6 M2 6 Q5 0 8 6 M-2 7 Q0 3 2 7" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+      '<circle r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse rx="3" ry="7" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M-7 0 H7" stroke="currentColor" stroke-width="1.2"/>',
+      '<path d="M1 -7 A7 7 0 1 0 7 2 A5.5 5.5 0 1 1 1 -7 Z" fill="currentColor"/><circle cx="6" cy="-5" r="1" fill="currentColor"/>',
+      '<circle cx="-3" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="3" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+      '<path d="M0 0 C-3 -5 -9 -5 -9 0 C-9 5 -3 5 0 0 C3 -5 9 -5 9 0 C9 5 3 5 0 0 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>'
     ];
     const colours = [["Chili red", "#d7263d"], ["Pepper white", "#f2f2ef"], ["Midnight black", "#24262b"], ["Island blue", "#3a8fd1"], ["Rose gold", "#e7a39a"], ["Champagne", "#e9d3a0"]];
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const $ = (id) => document.getElementById(id);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const token = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const PAL = ["--champagne", "--rose", "--cream", "--gold", "--blush"].map(token); // canvas needs resolved colours
     const svg = $("scene"), wrap = $("wrap"), car = $("car"), walkers = $("walkers");
 
-    let saved = { ticks: [], colour: "#d7263d" };
+    let saved = { ticks: [], colour: "#d7263d", tapped: false };
     try { saved = Object.assign(saved, JSON.parse(localStorage.getItem("aya-new-year") || "{}")); } catch (e) {}
     const save = () => { try { localStorage.setItem("aya-new-year", JSON.stringify(saved)); } catch (e) {} };
 
-    // ---------- Scene, drawn for the screen width ----------
+    // ---------- Scene geometry (redrawn for phone or wide screens) ----------
     let W = 1000, hx = 818, startX = 10, endX = 0;
     const carW = 139;
     const carXFor = (n) => startX + (endX - startX) * (n / wishes.length);
+    const lanternAt = (k) => [carXFor(k + 1) + carW / 2, k % 2 ? 158 : 138];
 
     function render() {
-      W = window.innerWidth < 640 ? 620 : 1000;
+      W = window.innerWidth < 640 ? 560 : 1000;
       hx = W - 182;
       endX = hx + 12 - carW - 10;
       svg.setAttribute("viewBox", `0 0 ${W} 300`);
       ["skyN", "skyD", "road"].forEach((id) => $(id).setAttribute("width", W));
       let seed = 2027;
       const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
       $("stars").innerHTML = Array.from({ length: Math.round(W * 0.08) }, () => {
         const tw = rnd() < 0.5 ? ` class="tw" style="--d:${(2 + rnd() * 3).toFixed(1)}s;--dl:-${(rnd() * 4).toFixed(1)}s"` : "";
         return `<circle cx="${(rnd() * W).toFixed(1)}" cy="${(40 + rnd() * 150).toFixed(1)}" r="${(0.5 + rnd() * 1.2).toFixed(2)}" fill-opacity="${(0.3 + rnd() * 0.6).toFixed(2)}"${tw}/>`;
       }).join("");
-      const mx = W * 0.15;
+
+      // Moon sits above our home
+      const mx = W - 135;
       $("moon").setAttribute("d", `M${mx} 82 a26 26 0 1 0 22 40 a21 21 0 1 1 -22 -40 Z`);
       $("moonGlow").setAttribute("cx", mx + 2); $("moonGlow").setAttribute("cy", 104);
-      $("clouds").innerHTML = [0, 1, 2].map((i) =>
-        `<g class="cloud" style="--from:-280px;--to:${W + 80}px;animation-duration:${70 + i * 28}s;animation-delay:-${i * 31 + 10}s" opacity="${(0.07 + i * 0.02).toFixed(2)}"><ellipse cx="0" cy="${62 + i * 34}" rx="130" ry="9"/><ellipse cx="70" cy="${56 + i * 34}" rx="74" ry="8"/></g>`).join("");
+
+      // Soft, feathered clouds
+      $("clouds").innerHTML = [0, 1].map((i) =>
+        `<g class="cloud" style="--from:-360px;--to:${W + 140}px;animation-duration:${90 + i * 40}s;animation-delay:-${i * 45 + 15}s">` +
+        `<ellipse cx="0" cy="${70 + i * 40}" rx="170" ry="22" fill="url(#cloudg)"/><ellipse cx="90" cy="${60 + i * 40}" rx="110" ry="18" fill="url(#cloudg)"/><ellipse cx="-80" cy="${76 + i * 40}" rx="90" ry="14" fill="url(#cloudg)"/></g>`).join("");
+
       $("sunGlow").setAttribute("cx", W * 0.46); $("sunGlow").setAttribute("cy", 170);
       $("sunDisc").setAttribute("cx", W * 0.46); $("sunDisc").setAttribute("cy", 170);
-      let sky = "", win = "", x = 0;
+
+      // City skyline with lit windows (starts off-canvas so parallax never shows an edge)
+      let sky = "", win = "", x = -12;
       while (x < hx - 30) {
         const w = 30 + Math.round(rnd() * 40), h = 64 + Math.round(rnd() * 66), y = 256 - h;
         sky += `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`;
@@ -368,35 +485,66 @@
       }
       $("skyline").innerHTML = sky;
       $("windows").innerHTML = win;
+
+      // Our home, with wispy chimney smoke
       $("house").innerHTML = `<g transform="translate(${hx} 150)">
         <circle class="home-glow" cx="75" cy="60" r="120" fill="url(#lamp)"/>
-        <rect x="12" y="44" width="126" height="64" rx="3" fill="#3a1641"/>
-        <path d="M0 48 L75 2 L150 48 Z" fill="#5b2160"/>
-        <rect x="104" y="12" width="14" height="24" fill="#4a1b4f"/>
-        <circle class="puff" cx="111" cy="8" r="4" fill="#cdb6c9"/>
-        <circle class="puff" cx="111" cy="8" r="4" fill="#cdb6c9" style="animation-delay:-1.2s"/>
-        <circle class="puff" cx="111" cy="8" r="4" fill="#cdb6c9" style="animation-delay:-2.4s"/>
-        <rect x="24" y="62" width="26" height="22" rx="2" fill="#f6dfb0"/>
-        <rect x="100" y="62" width="26" height="22" rx="2" fill="#f6dfb0"/>
-        <rect x="62" y="70" width="26" height="38" rx="2" fill="#2b1036"/>
-        <path d="M75 82 C 72 77, 66 79, 69 84 L75 89 L81 84 C 84 79, 78 77, 75 82 Z" fill="#f2a7a0"/>
-        <text x="75" y="36" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="13" fill="#f6dfb0">Home</text></g>`;
+        <rect x="12" y="44" width="126" height="64" rx="3" style="fill: #3a1641"/>
+        <path d="M0 48 L75 2 L150 48 Z" style="fill: #5b2160"/>
+        <rect x="104" y="12" width="14" height="24" style="fill: #4a1b4f"/>
+        <ellipse class="puff" cx="111" cy="8" rx="7" ry="6" fill="url(#smokeg)"/>
+        <ellipse class="puff" cx="111" cy="8" rx="7" ry="6" fill="url(#smokeg)" style="animation-delay:-1.3s"/>
+        <ellipse class="puff" cx="111" cy="8" rx="7" ry="6" fill="url(#smokeg)" style="animation-delay:-2.6s"/>
+        <rect x="24" y="62" width="26" height="22" rx="2" style="fill: var(--champagne)"/>
+        <rect x="100" y="62" width="26" height="22" rx="2" style="fill: var(--champagne)"/>
+        <rect x="62" y="70" width="26" height="38" rx="2" style="fill: var(--plum)"/>
+        <path d="M75 82 C 72 77, 66 79, 69 84 L75 89 L81 84 C 84 79, 78 77, 75 82 Z" style="fill: var(--rose)"/>
+        <text x="75" y="36" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="13" style="fill: var(--champagne)">Home</text></g>`;
+
       let d = "";
       for (let dx = 20; dx < W; dx += 100) d += `<rect x="${dx}" y="276" width="40" height="3" rx="1.5"/>`;
       $("dashes").innerHTML = d;
       let l = "";
-      for (let lx = 90; lx < hx - 40; lx += 210) l += `<circle class="lampglow" style="animation-delay:-${(lx % 7) * 0.6}s" cx="${lx}" cy="206" r="34" fill="url(#lamp)"/><rect x="${lx - 1.5}" y="206" width="3" height="50" fill="#2a1230"/><circle cx="${lx}" cy="206" r="4" fill="#f6dfb0"/>`;
+      for (let lx = 90; lx < hx - 40; lx += 210) l += `<circle class="lampglow" style="animation-delay:-${(lx % 7) * 0.6}s" cx="${lx}" cy="206" r="34" fill="url(#lamp)"/><rect x="${lx - 1.5}" y="206" width="3" height="50" style="fill: #2a1230"/><circle cx="${lx}" cy="206" r="4" style="fill: var(--champagne)"/>`;
       $("lamps").innerHTML = l;
+
+      // A string of lights from the city to our roof; each lantern hangs from it
+      const anchors = [[-10, 96], ...wishes.map((_, k) => { const [lx, ly] = lanternAt(k); return [lx, ly - 19]; }), [hx + 75, 153]];
+      let path = `M${anchors[0][0]} ${anchors[0][1]}`, bulbs = "";
+      for (let i = 1; i < anchors.length; i += 1) {
+        const [ax, ay] = anchors[i - 1], [bx, by] = anchors[i];
+        const cx = (ax + bx) / 2, cy = Math.max(ay, by) + 10;
+        path += ` Q${cx.toFixed(1)} ${cy} ${bx.toFixed(1)} ${by}`;
+        [0.3, 0.55, 0.8].forEach((t, j) => {
+          const px = (1 - t) ** 2 * ax + 2 * (1 - t) * t * cx + t * t * bx;
+          const py = (1 - t) ** 2 * ay + 2 * (1 - t) * t * cy + t * t * by;
+          bulbs += `<circle class="${(i + j) % 2 ? "bulb-a" : "bulb-b"} tw" style="--d:${(1.6 + rnd() * 2.4).toFixed(1)}s;--dl:-${(rnd() * 3).toFixed(1)}s" cx="${px.toFixed(1)}" cy="${(py + 1.5).toFixed(1)}" r="1.7"/>`;
+        });
+      }
+      $("garland").innerHTML = `<path class="garland" d="${path}"/>${bulbs}`;
+
       $("lanterns").innerHTML = wishes.map((_, k) => {
-        const cx = carXFor(k + 1) + carW / 2, cy = k % 2 ? 158 : 138;
-        return `<g class="lantern" id="lan${k}" transform="translate(${cx.toFixed(1)} ${cy})"><g class="bob" style="animation-delay:-${(k * 0.47).toFixed(2)}s"><line y1="12" y2="34" stroke="#f6dfb0" stroke-opacity="0.35" stroke-width="1"/><circle r="12.5" fill="#2b1036" stroke="#f6dfb0" stroke-width="1.4"/><circle class="ping" r="12.5" fill="none" stroke="#f6dfb0" stroke-width="1.4"/><g class="icon">${icons[k]}</g></g></g>`;
+        const [cx, cy] = lanternAt(k);
+        return `<g class="lantern" id="lan${k}" transform="translate(${cx.toFixed(1)} ${cy})"><g class="bob" style="animation-delay:-${(k * 0.47).toFixed(2)}s">
+          <circle class="lan-glow" r="30" fill="url(#lamp)"/>
+          <line y1="-23" y2="-15" style="stroke: var(--champagne)" stroke-opacity="0.5" stroke-width="1"/>
+          <ellipse class="lan-body" rx="11.5" ry="13"/>
+          <path class="lan-rib" d="M-5 -12 Q-8.5 0 -5 12 M5 -12 Q8.5 0 5 12"/>
+          <ellipse class="ping" rx="11.5" ry="13"/>
+          <rect class="lan-cap" x="-5" y="-16" width="10" height="3.5" rx="1.2"/>
+          <rect class="lan-cap" x="-4" y="12.5" width="8" height="3" rx="1"/>
+          <line y1="15.5" y2="22" style="stroke: var(--rose)" stroke-width="1.2" stroke-linecap="round"/>
+          <g class="icon"><g transform="scale(0.82)">${icons[k]}</g></g>
+        </g></g>`;
       }).join("");
       sizeScene();
     }
 
     function sizeScene() {
       const natural = wrap.clientWidth * 300 / W;
-      svg.style.height = `${Math.round(Math.min(natural, window.innerHeight * 0.6, 640))}px`;
+      const h = Math.round(Math.min(natural, window.innerHeight * 0.46, 640));
+      svg.style.height = `${h}px`;
+      document.documentElement.style.setProperty("--scene-h", `${h}px`);
     }
 
     function placeCar(n, animate, slow) {
@@ -418,13 +566,14 @@
       fx.w = r.width; fx.h = r.height;
     }
     function rel(el) { const a = el.getBoundingClientRect(), b = wrap.getBoundingClientRect(); return { x: a.left - b.left + a.width / 2, y: a.top - b.top, w: a.width, h: a.height }; }
-    function later(ms, fn) { fx.queue.push({ at: performance.now() + ms, fn }); start(); }
     function start() { if (!fx.running) { fx.running = true; requestAnimationFrame(frame); } }
+    function later(ms, fn) { fx.queue.push({ at: performance.now() + ms, fn }); start(); }
     function burst(x, y, c, n) {
       for (let i = 0; i < n; i += 1) { const a = (i / n) * Math.PI * 2, s = 1.1 + Math.random() * 2.6; fx.parts.push({ k: "spark", x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, c }); }
+      start();
     }
     function hearts(x, y) {
-      for (let i = 0; i < 12; i += 1) fx.parts.push({ k: "heart", x: x + (Math.random() - 0.5) * 40, y, vx: (Math.random() - 0.5) * 0.8, vy: -0.8 - Math.random() * 1.2, life: 1, c: i % 2 ? "#f2a7a0" : "#f6dfb0", s: 12 + Math.random() * 10 });
+      for (let i = 0; i < 12; i += 1) fx.parts.push({ k: "heart", x: x + (Math.random() - 0.5) * 40, y, vx: (Math.random() - 0.5) * 0.8, vy: -0.8 - Math.random() * 1.2, life: 1, c: i % 2 ? PAL[1] : PAL[0], s: 12 + Math.random() * 10 });
       start();
     }
     function spell(text, cx, cy) {
@@ -442,8 +591,8 @@
       let pts = [];
       for (let y = 0; y < h; y += step) for (let x = 0; x < w; x += step) if (data[(y * w + x) * 4 + 3] > 128) pts.push([x, y]);
       if (pts.length > 750) pts = pts.filter((_, i) => i % Math.ceil(pts.length / 750) === 0);
-      const t0 = performance.now(), pal = ["#f6dfb0", "#ffd27a", "#fff6ea", "#f2a7a0"];
-      pts.forEach(([tx, ty], i) => fx.parts.push({ k: "letter", ox: cx, oy: cy, tx, ty, x: cx, y: cy, t0: t0 + (i % 40) * 6, vy: 0, life: 1, c: pal[i % pal.length] }));
+      const t0 = performance.now();
+      pts.forEach(([tx, ty], i) => fx.parts.push({ k: "letter", ox: cx, oy: cy, tx, ty, x: cx, y: cy, t0: t0 + (i % 40) * 6, vy: 0, life: 1, c: PAL[i % 4] }));
       start();
     }
     function frame(now) {
@@ -475,12 +624,21 @@
       if (reduce) return;
       fxSize();
       const home = rel($("house"));
-      const pal = ["#f6dfb0", "#f2a7a0", "#fff6ea", "#ffd27a", "#ff8fa3"];
       [[0, 0.1, 0.25], [350, -0.25, 0.12], [700, 0.3, 0.1], [1050, -0.05, 0.05]].forEach(([t, dx, dy], i) =>
-        later(t, () => burst(home.x + dx * home.w, home.y + dy * fx.h, pal[i % pal.length], 70)));
+        later(t, () => burst(home.x + dx * home.w, home.y + dy * fx.h, PAL[i % PAL.length], 70)));
       const fontReady = document.fonts ? document.fonts.load("700 40px Jost").catch(() => {}) : Promise.resolve();
       later(1300, () => fontReady.then(() => spell("AYA", fx.w / 2, fx.h * 0.55)));
     }
+
+    // Tap the sky anywhere for a firework
+    wrap.addEventListener("click", (e) => {
+      if (reduce) return;
+      fxSize();
+      const b = wrap.getBoundingClientRect();
+      burst(e.clientX - b.left, e.clientY - b.top, PAL[Math.floor(Math.random() * PAL.length)], 64);
+      if (!saved.tapped) { saved.tapped = true; save(); $("skyHint").classList.add("gone"); }
+    });
+    if (saved.tapped || reduce) $("skyHint").hidden = true;
 
     // ---------- Wishes ----------
     const tickSvg = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="#2b1036" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -496,7 +654,6 @@
       $("progress").textContent = n === wishes.length ? "All 8 wishes came true" : `${n} of ${wishes.length} wishes come true`;
       $("sceneProgress").textContent = n === wishes.length ? "All 8 came true" : `${n} of ${wishes.length}`;
     }
-
     function finalState() {
       document.body.classList.add("forever", "dawn");
       walkers.classList.remove("show");
@@ -515,8 +672,8 @@
       step(2500, celebrate);
       step(6600, () => document.body.classList.add("dawn"));
       step(7000, () => {
-        const note = $("note"), r = note.getBoundingClientRect();
-        if (r.top < 0 || r.bottom > window.innerHeight) note.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+        const note = $("note"), r = note.getBoundingClientRect(), sceneBottom = wrap.getBoundingClientRect().bottom;
+        if (r.top < sceneBottom || r.bottom > window.innerHeight) note.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
       });
     }
 
@@ -532,8 +689,8 @@
         const lan = $(`lan${k}`);
         lan.classList.remove("pop"); void lan.getBBox(); lan.classList.add("pop");
         if (navigator.vibrate && !reduce) navigator.vibrate(12);
+        if (!reduce) setTimeout(() => { fxSize(); const c = rel(car); hearts(c.x, c.y); }, 300);
       }
-      if (e.target.checked && !reduce) setTimeout(() => { fxSize(); const c = rel(car); hearts(c.x, c.y); }, 300);
       if (n === wishes.length) playEnding();
       else { clearEnding(); document.body.classList.remove("forever", "dawn"); walkers.classList.remove("show"); }
     });
@@ -554,20 +711,28 @@
     sw.addEventListener("click", (e) => { const b = e.target.closest(".swatch"); if (b) paint(b.dataset.c); });
 
     // ---------- Countdown to midnight, 1 January 2027 ----------
-    const target = new Date(2027, 0, 1, 0, 0, 0).getTime();
+    // Preview: open the page with #midnight to play the last 10 seconds now.
+    const target = location.hash === "#midnight" ? Date.now() + 11500 : new Date(2027, 0, 1, 0, 0, 0).getTime();
     const pad = (v) => String(v).padStart(2, "0");
+    const big = $("bigcount");
     function setDigit(id, val) {
       const el = $(id);
       if (el.textContent === val) return;
       el.textContent = val;
       el.classList.remove("flip"); void el.offsetWidth; el.classList.add("flip");
     }
+    function showBig(n) {
+      big.textContent = n;
+      big.classList.remove("pop"); void big.offsetWidth; big.classList.add("pop");
+    }
     let celebrated = false;
     function tick() {
       const left = target - Date.now();
       if (left <= 0) {
+        big.textContent = "";
+        document.body.classList.add("midnight");
         $("count").innerHTML = '<p class="newyear">It\'s 2027. Happy New Year, my love.</p>';
-        if (!celebrated && Date.now() - target < 86400000) { celebrated = true; setTimeout(celebrate, 900); }
+        if (!celebrated && Date.now() - target < 86400000) { celebrated = true; setTimeout(celebrate, 300); }
         return;
       }
       const s = Math.floor(left / 1000);
@@ -575,7 +740,9 @@
       setDigit("cd-h", pad(Math.floor((s % 86400) / 3600)));
       setDigit("cd-m", pad(Math.floor((s % 3600) / 60)));
       setDigit("cd-s", pad(s % 60));
-      setTimeout(tick, 1000 - (Date.now() % 1000));
+      const final = Math.ceil(left / 1000);
+      if (final <= 10 && !reduce) showBig(final);
+      setTimeout(tick, Math.min(1000 - (Date.now() % 1000), left));
     }
 
     // ---------- The living night: snow, flickering windows, shooting stars ----------
@@ -590,9 +757,9 @@
       flakes = Array.from({ length: n }, () => ({ x: Math.random() * sw0, y: Math.random() * sh0, r: 0.8 + Math.random() * 1.6, vy: 0.25 + Math.random() * 0.6, p: Math.random() * 100, a: 0.35 + Math.random() * 0.5 }));
     }
     function snowFrame() {
-      if (!snowOn) { sctx.clearRect(0, 0, sw0, sh0); return; }
       sctx.clearRect(0, 0, sw0, sh0);
-      sctx.fillStyle = "#fff6ea";
+      if (!snowOn) return;
+      sctx.fillStyle = PAL[2];
       for (const f of flakes) {
         f.y += f.vy; f.x += Math.sin((f.y + f.p) / 28) * 0.35 + 0.08;
         if (f.y > sh0 + 4) { f.y = -4; f.x = Math.random() * sw0; }
@@ -619,11 +786,26 @@
 
     function shootingStar() {
       if (alive() && !document.body.classList.contains("dawn")) {
-        $("shooterPos").setAttribute("transform", `translate(${(W * (0.25 + Math.random() * 0.4)).toFixed(0)} ${(36 + Math.random() * 60).toFixed(0)})`);
+        $("shooterPos").setAttribute("transform", `translate(${(W * (0.2 + Math.random() * 0.35)).toFixed(0)} ${(40 + Math.random() * 50).toFixed(0)})`);
         const s = $("shooter");
         s.classList.remove("go"); void s.getBBox(); s.classList.add("go");
       }
       setTimeout(shootingStar, 4500 + Math.random() * 5000);
+    }
+
+    // ---------- Depth: stars and city drift with the mouse ----------
+    if (!reduce && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      const far = $("far"), mid = $("mid");
+      let tx = 0, ty = 0, cx = 0, cy = 0, moving = false;
+      const step = () => {
+        cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+        far.setAttribute("transform", `translate(${(-cx * 10).toFixed(2)} ${(-cy * 5).toFixed(2)})`);
+        mid.setAttribute("transform", `translate(${(-cx * 5).toFixed(2)} ${(-cy * 2).toFixed(2)})`);
+        if (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.002) requestAnimationFrame(step); else moving = false;
+      };
+      const aim = (x, y) => { tx = x; ty = y; if (!moving) { moving = true; requestAnimationFrame(step); } };
+      wrap.addEventListener("pointermove", (e) => { const b = wrap.getBoundingClientRect(); aim((e.clientX - b.left) / b.width * 2 - 1, (e.clientY - b.top) / b.height * 2 - 1); });
+      wrap.addEventListener("pointerleave", () => aim(0, 0));
     }
 
     // ---------- Start ----------
@@ -644,7 +826,7 @@
 
     let lastW = W;
     window.addEventListener("resize", () => {
-      const nextW = window.innerWidth < 640 ? 620 : 1000;
+      const nextW = window.innerWidth < 640 ? 560 : 1000;
       if (nextW !== lastW) { lastW = nextW; render(); syncLanterns(done()); placeCar(done().length, false, false); }
       else sizeScene();
       snowSize();
