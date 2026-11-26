@@ -216,7 +216,44 @@
     footer { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
     footer a { display: inline-block; padding: var(--s2) 0; color: var(--champagne); }
 
+    /* ---------- Road signs: our story so far ---------- */
+    .sign { color: var(--champagne); cursor: pointer; }
+    .sign-plaque { fill: var(--wine); stroke: currentColor; stroke-opacity: 0.45; stroke-width: 1; transition: fill var(--m300) var(--ease-out); }
+    .sign-post { fill: #2a1230; }
+    .sign .icon { opacity: 0.5; transition: opacity var(--m300) var(--ease-out); }
+    .sign.passed .sign-plaque { fill: #9b4466; stroke-opacity: 0.9; }
+    .sign.passed .icon { opacity: 1; }
+    .sign-hit { fill: transparent; }
+    .milestone { position: absolute; left: 50%; bottom: var(--s1); transform: translate(-50%, 6px); margin: 0; padding: 6px var(--s3); border-radius: var(--r-pill); background: rgba(23, 8, 32, 0.82); box-shadow: inset 0 0 0 1px rgba(246, 223, 176, 0.35); text-align: center; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    .milestone.show { opacity: 1; transform: translate(-50%, 0); }
+    .milestone b { font-family: var(--display); font-style: italic; font-weight: 500; font-size: var(--fs-m); color: var(--champagne); }
+    .milestone small { margin-left: var(--s1); font-size: 13px; color: var(--soft); }
+
+    /* ---------- Time capsule: a letter that unlocks at midnight ---------- */
+    .capsule { margin: 0 0 var(--s6); display: grid; justify-items: center; gap: var(--s3); text-align: center; }
+    .capsule h3 { margin: 0; font-family: var(--display); font-style: italic; font-weight: 500; font-size: var(--fs-l); color: var(--champagne); }
+    .capsule-status { margin: 0; color: var(--soft); font-size: var(--fs-s); }
+    .capsule-msg { margin: 0; min-height: 1.6em; color: var(--rose); font-size: var(--fs-s); }
+    .envelope { position: relative; width: min(420px, 100%); aspect-ratio: 3 / 2; padding: 0; border: 0; background: none; cursor: pointer; perspective: 1200px; }
+    .envelope:focus-visible { outline: 2px solid var(--rose); outline-offset: 6px; border-radius: 12px; }
+    .env-back, .env-front { position: absolute; inset: 0; border-radius: 10px; }
+    .env-back { background: #e1d0b0; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.7), 0 0 90px rgba(246, 194, 122, 0.12); }
+    .env-front { background: linear-gradient(170deg, #efe3cb, #e4d4b6); clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%); }
+    .env-flap { position: absolute; left: 0; right: 0; top: 0; height: 60%; z-index: 1; background: linear-gradient(180deg, #f4ead6, #e1d0b0); clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 10px 10px 0 0; transform-origin: top center; transition: transform 600ms var(--ease-out); }
+    .env-seal { position: absolute; left: 50%; top: 60%; z-index: 2; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 35% 30%, #c23a4f, #9b1b30 60%, #6e1022); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), inset 0 0 0 5px rgba(0, 0, 0, 0.12); color: var(--champagne); font: italic 600 34px/1 var(--display); transition: opacity var(--m300) ease-in, transform var(--m300) var(--ease-out); }
+    .envelope.nudge { animation: nudge 360ms ease-in-out; }
+    body.midnight .env-seal { animation: sealglow 2.4s ease-in-out infinite; }
+    .capsule.open .env-flap { transform: rotateX(180deg); z-index: 0; }
+    .capsule.open .env-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    .letter { width: min(640px, 100%); margin-top: var(--s2); padding: clamp(28px, 6vw, 56px); border-radius: 8px; background: #fbf5ea; color: #2a2f4a; text-align: left; box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.7), var(--glow-champagne); animation: rise 600ms var(--ease-out); }
+    .letter .salute { margin: 0 0 var(--s3); font-family: var(--display); font-style: italic; font-weight: 600; font-variation-settings: "opsz" 30; font-size: clamp(34px, 6vw, 48px); line-height: 1; color: #2a2f4a; }
+    .letter p { margin: 0 0 1.1em; font-size: 18px; line-height: 1.7; }
+    .letter .ar3 { margin: var(--s4) 0; text-align: center; font-family: var(--arabic); font-weight: 600; font-size: 28px; color: #9b1b30; direction: rtl; }
+    .letter .sign-off { margin: var(--s4) 0 0; text-align: right; font-family: var(--display); font-style: italic; font-size: 26px; color: #2a2f4a; }
+
     /* ---------- Keyframes ---------- */
+    @keyframes nudge { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    @keyframes sealglow { 0%, 100% { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(246, 223, 176, 0); } 50% { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), 0 0 26px 6px rgba(246, 223, 176, 0.55); } }
     @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     @keyframes shimmer { from { background-position: 130% 0; } to { background-position: -130% 0; } }
     @keyframes flip { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
@@ -249,6 +286,9 @@
       .scene-progress { display: block; }
       .scene-pills { top: var(--s1); left: var(--s1); flex-direction: row; flex-wrap: wrap; }
       .pill { padding: 4px 10px; font-size: 13px; }
+      .milestone { bottom: 4px; padding: 3px var(--s2); }
+      .milestone b { font-size: var(--fs-xs); }
+      .milestone small { font-size: 12px; }
       .strip .wrap { padding-block: var(--s2); }
       .strip .progress { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       .wishes { padding-top: 28px; }
@@ -267,8 +307,8 @@
       h1.rise { background: none; color: var(--champagne); }
     }
     @media (prefers-reduced-motion: reduce) {
-      #car, #car.drive, .beam, .lan-body, .lan-glow, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch, .pill, #windows rect { transition: none; }
-      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping, .tw, #moonGlow, .lampglow, .cloud, .puff, .lantern .bob, #carIdle, .flick, .digits b.flip, .promise-note::before, .bigcount.pop { animation: none; }
+      #car, #car.drive, .beam, .lan-body, .lan-glow, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch, .pill, #windows rect, .sign-plaque, .sign .icon, .milestone, .env-flap, .env-seal { transition: none; }
+      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping, .tw, #moonGlow, .lampglow, .cloud, .puff, .lantern .bob, #carIdle, .flick, .digits b.flip, .promise-note::before, .bigcount.pop, .envelope.nudge, body.midnight .env-seal, .letter { animation: none; }
       .rise, h1.rise { animation: none; opacity: 1; }
     }
   </style>
@@ -316,7 +356,10 @@
         <g id="clouds" class="night-only"></g>
         <g class="night-only"><g id="shooterPos"><g id="shooter"><line x1="0" y1="0" x2="-70" y2="-16" stroke="url(#shootg)" stroke-width="1.6" stroke-linecap="round"/></g></g></g>
         <g class="night-only"><circle id="moonGlow" r="64" fill="url(#moonglow)"/></g>
-        <path id="moon" class="night-only" style="fill: var(--champagne)"/>
+        <g class="night-only"><title>The real moon over Amman on New Year's Eve</title>
+          <circle id="moonDark" r="22" style="fill: #3a1d47" opacity="0.6"/>
+          <path id="moon" style="fill: var(--champagne)"/>
+        </g>
       </g>
       <g id="sun"><circle id="sunGlow" r="90" fill="url(#sunglow)"/><circle id="sunDisc" r="34" style="fill: var(--gold)"/></g>
       <!-- Middle layer -->
@@ -330,6 +373,7 @@
       <g id="lamps"></g>
       <g id="garland"></g>
       <g id="lanterns"></g>
+      <g id="signs"></g>
       <g transform="translate(0 256)"><g id="walkers">
         <circle cx="0" cy="-31" r="4.6" style="fill: var(--cream)"/>
         <path d="M-5 -26 H5 L7 -8 H-7 Z" style="fill: var(--cream)"/>
@@ -362,6 +406,7 @@
     <canvas id="snow" aria-hidden="true"></canvas>
     <canvas id="fw" aria-hidden="true"></canvas>
     <div class="bigcount" id="bigcount" aria-hidden="true"></div>
+    <p class="milestone" id="milestone" aria-live="polite"></p>
     <div class="scene-pills" aria-hidden="true">
       <p class="pill scene-progress" id="sceneProgress">0 of 8</p>
       <p class="pill sky-hint" id="skyHint">Tap the sky for fireworks</p>
@@ -390,6 +435,24 @@
           <p class="promise-ar" lang="ar">حان الوقت يا آية، يلّا نحقق كل أمنياتنا سوا</p>
         </div>
       </div>
+      <section class="capsule" id="capsule" aria-labelledby="capsuleTitle">
+        <h3 id="capsuleTitle">A letter for midnight</h3>
+        <button class="envelope" id="envelope" type="button" aria-describedby="capsuleStatus">
+          <span class="env-back"></span>
+          <span class="env-front"></span>
+          <span class="env-flap"></span>
+          <span class="env-seal" aria-hidden="true">A</span>
+        </button>
+        <p class="capsule-status" id="capsuleStatus">Sealed until midnight on 1 January 2027, Amman time</p>
+        <p class="capsule-msg" id="capsuleMsg" aria-live="polite"></p>
+        <article class="letter" id="letter" hidden>
+          <p class="salute">My Aya,</p>
+          <div id="letterBody"></div>
+          <p class="ar3" lang="ar">أحبّكِ، اليوم وكل عام</p>
+          <p class="sign-off">Your husband</p>
+        </article>
+      </section>
+
       <h2>Everything I wish for us</h2>
       <p class="sub">On New Year's night, tick each one. Every wish lights a lantern over the road, and your Mini brings us a little closer to home.</p>
       <ul class="items" id="items"></ul>
@@ -432,6 +495,48 @@
     ];
     const colours = [["Chili red", "#d7263d"], ["Pepper white", "#f2f2ef"], ["Midnight black", "#24262b"], ["Island blue", "#3a8fd1"], ["Rose gold", "#e7a39a"], ["Champagne", "#e9d3a0"]];
 
+    // Our story so far: road signs the Mini passes on the way home.
+    // Add a date to any milestone (e.g. "March 2025") and it shows under the title.
+    const milestones = [
+      { title: "Where it all began", date: "" },
+      { title: "Our drives together", date: "" },
+      { title: "Horses under the stars", date: "" },
+      { title: "Late-night calls", date: "" },
+      { title: "You said yes", date: "Valentine's 2026" },
+      { title: "Two years of us", date: "" }
+    ];
+    const signIcons = [
+      '<path d="M0 -6 L1.6 -1.6 L6 0 L1.6 1.6 L0 6 L-1.6 1.6 L-6 0 L-1.6 -1.6 Z" fill="currentColor"/>',
+      '<path d="M-8 3 Q-8 0 -5 0 L-3 -4 H3 L5 0 Q8 0 8 3 V5 H-8 Z" fill="currentColor"/>',
+      '<path d="M-4.5 -5 V0.5 A4.5 4.5 0 0 0 4.5 0.5 V-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<path d="M-6 -5 H6 V3 H-1 L-4 6 V3 H-6 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+      '<path d="M0 6 C-8 0 -7 -6 -3 -6 C-1 -6 0 -4 0 -3 C0 -4 1 -6 3 -6 C7 -6 8 0 0 6 Z" fill="currentColor"/>',
+      '<text y="4.5" text-anchor="middle" font-family="\'Bodoni Moda\', Georgia, serif" font-style="italic" font-weight="600" font-size="13" fill="currentColor">2</text>'
+    ];
+    const signPos = milestones.map((_, i) => 0.5 + i * (wishes.length - 1) / (milestones.length - 1)); // car positions between ticks
+
+    // The time capsule letter, encoded so it can't be read early from the page text
+    const LETTER = "WyJJdFx1MDAyN3MgbWlkbmlnaHQuIEEgbmV3IHllYXIgaGFzIGp1c3QgYmVndW4sIGFuZCB0aGUgdmVyeSBmaXJzdCB0aGluZyBJIHdhbnRlZCB0byBkbyBpbiBpdCB3YXMgdGVsbCB5b3UgdGhhdCBJIGxvdmUgeW91LiIsIlR3byB5ZWFycyBhZ28gSSBkaWRuXHUwMDI3dCBrbm93IG9uZSBwZXJzb24gY291bGQgYmVjb21lIG15IHdob2xlIHdvcmxkLiBOb3cgSSBjYW5cdTAwMjd0IHJlbWVtYmVyIHdoYXQgbXkgZGF5cyBmZWx0IGxpa2UgYmVmb3JlIHlvdSwgYW5kIEkgbmV2ZXIgd2FudCB0by4iLCJJbiAyMDI3IEkgd2FudCB0byBidWlsZCBldmVyeXRoaW5nIHdlIGRyZWFtIGFib3V0OiBvdXIgb3duIGhvbWUsIG91ciBvd24gZmFtaWx5LCBhbmQgYSBsaWZlIGZ1bGwgb2Ygc21hbGwgbW9tZW50cyB0aGF0IGJlbG9uZyBvbmx5IHRvIHVzLiBCdXQgZXZlbiBpZiB3ZSBoYWQgbm9uZSBvZiB0aGF0IHlldCwgSSB3b3VsZCBzdGlsbCBiZSB0aGUgbHVja2llc3QgbWFuIGFsaXZlLCBiZWNhdXNlIEkgaGF2ZSB5b3UuIiwiVGhhbmsgeW91IGZvciBldmVyeSB5ZWFyIHNvIGZhci4gSSBwcm9taXNlIHlvdSBldmVyeSB5ZWFyIHRoYXRcdTAwMjdzIGxlZnQuIiwiSGFwcHkgTmV3IFllYXIsIG15IGxvdmUuIl0=";
+
+    // Midnight on 1 January 2027 in Amman (Jordan is UTC+3 all year)
+    const MIDNIGHT_UTC = Date.UTC(2026, 11, 31, 21, 0, 0);
+    const preview = location.hash === "#midnight";
+
+    // Real moon phase for that night: fraction of the synodic month since a known new moon
+    function moonFraction(ms) {
+      const jd = ms / 86400000 + 2440587.5;
+      return (((jd - 2451550.1) / 29.530588853) % 1 + 1) % 1;
+    }
+    // Lit part of the moon: a half-circle limb plus an elliptical terminator
+    function moonPath(cx, cy, r, f) {
+      const k = (1 - Math.cos(2 * Math.PI * f)) / 2;
+      const rx = (r * Math.abs(1 - 2 * k)).toFixed(2);
+      const top = `${cx} ${cy - r}`, bot = `${cx} ${cy + r}`;
+      return f < 0.5
+        ? `M${top} A${r} ${r} 0 0 1 ${bot} A${rx} ${r} 0 0 ${k < 0.5 ? 0 : 1} ${top} Z`
+        : `M${top} A${r} ${r} 0 0 0 ${bot} A${rx} ${r} 0 0 ${k < 0.5 ? 1 : 0} ${top} Z`;
+    }
+
     const $ = (id) => document.getElementById(id);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const token = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -462,10 +567,11 @@
         return `<circle cx="${(rnd() * W).toFixed(1)}" cy="${(40 + rnd() * 150).toFixed(1)}" r="${(0.5 + rnd() * 1.2).toFixed(2)}" fill-opacity="${(0.3 + rnd() * 0.6).toFixed(2)}"${tw}/>`;
       }).join("");
 
-      // Moon sits above our home
-      const mx = W - 135;
-      $("moon").setAttribute("d", `M${mx} 82 a26 26 0 1 0 22 40 a21 21 0 1 1 -22 -40 Z`);
-      $("moonGlow").setAttribute("cx", mx + 2); $("moonGlow").setAttribute("cy", 104);
+      // The real moon over Amman at midnight, sitting above our home
+      const mx = W - 135, my = 102, mr = 22;
+      $("moonDark").setAttribute("cx", mx); $("moonDark").setAttribute("cy", my);
+      $("moon").setAttribute("d", moonPath(mx, my, mr, moonFraction(MIDNIGHT_UTC)));
+      $("moonGlow").setAttribute("cx", mx); $("moonGlow").setAttribute("cy", my);
 
       // Soft, feathered clouds
       $("clouds").innerHTML = [0, 1].map((i) =>
@@ -537,7 +643,29 @@
           <g class="icon"><g transform="scale(0.82)">${icons[k]}</g></g>
         </g></g>`;
       }).join("");
+
+      $("signs").innerHTML = milestones.map((_, i) => {
+        const x = carXFor(signPos[i]) + carW / 2;
+        return `<g class="sign" id="sign${i}" data-i="${i}" transform="translate(${x.toFixed(1)} 0)">
+          <rect class="sign-hit" x="-20" y="196" width="40" height="62"/>
+          <rect class="sign-post" x="-1.2" y="222" width="2.4" height="34"/>
+          <rect class="sign-plaque" x="-12" y="204" width="24" height="18" rx="3"/>
+          <g class="icon" transform="translate(0 213) scale(0.72)">${signIcons[i]}</g>
+        </g>`;
+      }).join("");
       sizeScene();
+    }
+
+    function syncSigns(n) { signPos.forEach((p, i) => $(`sign${i}`).classList.toggle("passed", n >= p)); }
+    let milestoneTimer = 0;
+    function showMilestone(i) {
+      const el = $("milestone"), m = milestones[i];
+      el.textContent = "";
+      const b = document.createElement("b"); b.textContent = m.title; el.appendChild(b);
+      if (m.date) { const s = document.createElement("small"); s.textContent = m.date; el.appendChild(s); }
+      el.classList.add("show");
+      clearTimeout(milestoneTimer);
+      milestoneTimer = setTimeout(() => el.classList.remove("show"), 2800);
     }
 
     function sizeScene() {
@@ -632,6 +760,8 @@
 
     // Tap the sky anywhere for a firework
     wrap.addEventListener("click", (e) => {
+      const sign = e.target.closest(".sign");
+      if (sign) { showMilestone(+sign.dataset.i); return; }
       if (reduce) return;
       fxSize();
       const b = wrap.getBoundingClientRect();
@@ -677,12 +807,17 @@
       });
     }
 
+    let prevN = 0;
     list.addEventListener("change", (e) => {
       const ticks = done(), n = ticks.length, k = +e.target.dataset.k;
       saved.ticks = ticks; save();
       setProgress(n);
       syncLanterns(ticks);
       placeCar(n, true, false);
+      const passed = signPos.map((p, i) => [p, i]).filter(([p]) => p > prevN && p <= n);
+      if (passed.length) setTimeout(() => showMilestone(passed[passed.length - 1][1]), 300);
+      prevN = n;
+      syncSigns(n);
       const row = e.target.closest(".item");
       row.classList.remove("just"); void row.offsetWidth; row.classList.add("just");
       if (e.target.checked) {
@@ -712,7 +847,41 @@
 
     // ---------- Countdown to midnight, 1 January 2027 ----------
     // Preview: open the page with #midnight to play the last 10 seconds now.
-    const target = location.hash === "#midnight" ? Date.now() + 11500 : new Date(2027, 0, 1, 0, 0, 0).getTime();
+    const target = preview ? Date.now() + 11500 : MIDNIGHT_UTC;
+
+    // ---------- Time capsule ----------
+    const capsule = $("capsule"), envelope = $("envelope"), capStatus = $("capsuleStatus");
+    const isMidnight = () => document.body.classList.contains("midnight");
+    function letterParas() {
+      try { return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(LETTER), (c) => c.charCodeAt(0)))); }
+      catch (e) { return []; }
+    }
+    function openLetter() {
+      if (!$("letter").hidden) return;
+      const body = $("letterBody");
+      body.textContent = "";
+      letterParas().forEach((t) => { const p = document.createElement("p"); p.textContent = t; body.appendChild(p); });
+      capsule.classList.add("open");
+      capStatus.textContent = "Opened on New Year's night";
+      $("capsuleMsg").textContent = "";
+      setTimeout(() => { $("letter").hidden = false; }, reduce ? 0 : 550);
+      if (!preview) { saved.opened = true; save(); }
+    }
+    envelope.addEventListener("click", () => {
+      if (isMidnight()) { openLetter(); return; }
+      $("capsuleMsg").textContent = "Not yet, my love. Wait for midnight.";
+      envelope.classList.remove("nudge"); void envelope.offsetWidth; envelope.classList.add("nudge");
+    });
+    function capsuleWhen(left) {
+      const d = Math.floor(left / 86400000), h = Math.floor(left / 3600000), m = Math.ceil(left / 60000);
+      if (d >= 1) return `Opens in ${d} ${d === 1 ? "day" : "days"}, at midnight Amman time`;
+      if (h >= 1) return `Opens in ${h} ${h === 1 ? "hour" : "hours"}, at midnight`;
+      return m > 1 ? `Opens in ${m} minutes` : "Opens in a moment";
+    }
+    function onMidnight() {
+      if (saved.opened && !preview) openLetter();
+      else if ($("letter").hidden) capStatus.textContent = "It's midnight. Open your letter.";
+    }
     const pad = (v) => String(v).padStart(2, "0");
     const big = $("bigcount");
     function setDigit(id, val) {
@@ -731,6 +900,7 @@
       if (left <= 0) {
         big.textContent = "";
         document.body.classList.add("midnight");
+        onMidnight();
         $("count").innerHTML = '<p class="newyear">It\'s 2027. Happy New Year, my love.</p>';
         if (!celebrated && Date.now() - target < 86400000) { celebrated = true; setTimeout(celebrate, 300); }
         return;
@@ -740,6 +910,8 @@
       setDigit("cd-h", pad(Math.floor((s % 86400) / 3600)));
       setDigit("cd-m", pad(Math.floor((s % 3600) / 60)));
       setDigit("cd-s", pad(s % 60));
+      const when = capsuleWhen(left);
+      if (capStatus.textContent !== when) capStatus.textContent = when;
       const final = Math.ceil(left / 1000);
       if (final <= 10 && !reduce) showBig(final);
       setTimeout(tick, Math.min(1000 - (Date.now() % 1000), left));
@@ -814,6 +986,8 @@
     const ticks0 = done();
     setProgress(ticks0.length);
     syncLanterns(ticks0);
+    syncSigns(ticks0.length);
+    prevN = ticks0.length;
     if (ticks0.length === wishes.length) finalState();
     if (reduce) placeCar(ticks0.length, false, false);
     else requestAnimationFrame(() => requestAnimationFrame(() => placeCar(ticks0.length, true, true)));
@@ -827,7 +1001,7 @@
     let lastW = W;
     window.addEventListener("resize", () => {
       const nextW = window.innerWidth < 640 ? 560 : 1000;
-      if (nextW !== lastW) { lastW = nextW; render(); syncLanterns(done()); placeCar(done().length, false, false); }
+      if (nextW !== lastW) { lastW = nextW; render(); syncLanterns(done()); syncSigns(done().length); placeCar(done().length, false, false); }
       else sizeScene();
       snowSize();
     });
