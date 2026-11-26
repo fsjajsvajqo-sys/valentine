@@ -212,8 +212,9 @@
     .item input:checked ~ .t b { color: var(--champagne); }
 
     /* Final message after sunrise */
-    .note { margin: var(--s5) 0 0; padding: 26px 28px; border-radius: var(--r-m); background: linear-gradient(120deg, rgba(242, 167, 160, 0.18), rgba(246, 223, 176, 0.12)); box-shadow: inset 0 0 0 1px var(--line); font-size: var(--fs-m); opacity: 0; transform: translateY(8px); transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); scroll-margin-top: calc(var(--scene-h) + var(--s4)); }
-    body.dawn .note { opacity: 1; transform: none; }
+    /* Out of the layout (and keyboard order) until the ending; .ended is set at sunrise */
+    .note { display: none; margin: var(--s5) 0 0; padding: 26px 28px; border-radius: var(--r-m); background: linear-gradient(120deg, rgba(242, 167, 160, 0.18), rgba(246, 223, 176, 0.12)); box-shadow: inset 0 0 0 1px var(--line); font-size: var(--fs-m); scroll-margin-top: calc(var(--scene-h) + var(--s4)); }
+    body.ended .note { display: block; animation: rise 600ms var(--ease-out); }
     .note strong { display: block; margin-bottom: 6px; font-family: var(--display); font-style: italic; font-weight: 500; font-size: 32px; line-height: 1.1; color: var(--champagne); }
     .note .ar2 { display: block; margin-top: 10px; font-family: var(--arabic); font-weight: 600; font-size: 26px; color: var(--rose); direction: rtl; text-align: left; }
     .replay { margin-top: 18px; min-height: 48px; padding: 0 22px; border: 0; border-radius: var(--r-pill); background: var(--champagne); color: var(--plum); font: 500 var(--fs-s)/1 var(--text); cursor: pointer; transition: background-color var(--m150) var(--ease-out); }
@@ -224,11 +225,12 @@
     footer a { display: inline-block; padding: var(--s2) 0; color: var(--champagne); }
 
     /* ---------- Road signs: our story so far ---------- */
-    .sign { color: var(--champagne); cursor: pointer; }
-    .sign-plaque { fill: var(--wine); stroke: currentColor; stroke-opacity: 0.45; stroke-width: 1; transition: fill var(--m300) var(--ease-out); }
+    .sign { color: var(--champagne); cursor: pointer; --sign-bg: var(--wine); }
+    .sign.passed { --sign-bg: #9b4466; }
+    .sign-plaque { fill: var(--sign-bg); stroke: currentColor; stroke-opacity: 0.45; stroke-width: 1; transition: fill var(--m300) var(--ease-out); }
     .sign-post { fill: #2a1230; }
-    .sign .icon { opacity: 0.5; transition: opacity var(--m300) var(--ease-out); }
-    .sign.passed .sign-plaque { fill: #9b4466; stroke-opacity: 0.9; }
+    .sign .icon { opacity: 0.55; transition: opacity var(--m300) var(--ease-out); }
+    .sign.passed .sign-plaque { stroke-opacity: 0.9; }
     .sign.passed .icon { opacity: 1; }
     .sign-hit { fill: transparent; }
     .milestone { position: absolute; left: 50%; bottom: var(--s1); transform: translate(-50%, 6px); margin: 0; padding: 6px var(--s3); border-radius: var(--r-pill); background: rgba(23, 8, 32, 0.82); box-shadow: inset 0 0 0 1px rgba(246, 223, 176, 0.35); text-align: center; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
@@ -237,11 +239,14 @@
     .milestone small { margin-left: var(--s1); font-size: 13px; color: var(--soft); }
 
     /* ---------- Time capsule: a letter that unlocks at midnight ---------- */
-    .capsule { margin: 0 0 var(--s6); display: grid; justify-items: center; gap: var(--s3); text-align: center; }
-    .capsule h3 { margin: 0; font-family: var(--display); font-style: italic; font-weight: 500; font-size: var(--fs-l); color: var(--champagne); }
+    /* Compact: envelope beside its text on wider screens, stacked on phones */
+    .capsule { margin: 0 0 var(--s6); }
+    .capsule-row { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: var(--s5); align-items: center; }
+    .capsule-text { display: grid; gap: var(--s1); }
+    .capsule .capsule-title { margin: 0; font-size: var(--fs-l); font-weight: 500; }
     .capsule-status { margin: 0; color: var(--soft); font-size: var(--fs-s); }
     .capsule-msg { margin: 0; min-height: 1.6em; color: var(--rose); font-size: var(--fs-s); }
-    .envelope { position: relative; width: min(420px, 100%); aspect-ratio: 3 / 2; padding: 0; border: 0; background: none; cursor: pointer; perspective: 1200px; }
+    .envelope { position: relative; width: 100%; aspect-ratio: 3 / 2; padding: 0; border: 0; background: none; cursor: pointer; perspective: 1200px; }
     .envelope:focus-visible { outline: 2px solid var(--rose); outline-offset: 6px; border-radius: 12px; }
     .env-back, .env-front { position: absolute; inset: 0; border-radius: 10px; }
     .env-back { background: #e1d0b0; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.7), 0 0 90px rgba(246, 194, 122, 0.12); }
@@ -252,11 +257,15 @@
     body.midnight .env-seal { animation: sealglow 2.4s ease-in-out infinite; }
     .capsule.open .env-flap { transform: rotateX(180deg); z-index: 0; }
     .capsule.open .env-seal { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
-    .letter { width: min(640px, 100%); margin-top: var(--s2); padding: clamp(28px, 6vw, 56px); border-radius: 8px; background: #fbf5ea; color: #2a2f4a; text-align: left; box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.7), var(--glow-champagne); animation: rise 600ms var(--ease-out); }
+    .letter { width: min(720px, 100%); margin-top: var(--s5); padding: clamp(28px, 6vw, 56px); border-radius: 8px; background: #fbf5ea; color: #2a2f4a; text-align: left; box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.7), var(--glow-champagne); animation: rise 600ms var(--ease-out); }
     .letter .salute { margin: 0 0 var(--s3); font-family: var(--display); font-style: italic; font-weight: 600; font-variation-settings: "opsz" 30; font-size: clamp(34px, 6vw, 48px); line-height: 1; color: #2a2f4a; }
     .letter p { margin: 0 0 1.1em; font-size: 18px; line-height: 1.7; }
     .letter .ar3 { margin: var(--s4) 0; text-align: center; font-family: var(--arabic); font-weight: 600; font-size: 28px; color: #9b1b30; direction: rtl; }
     .letter .sign-off { margin: var(--s4) 0 0; text-align: right; font-family: var(--display); font-style: italic; font-size: 26px; color: #2a2f4a; }
+
+    /* Gentle reminder when a wish is ticked before midnight */
+    .toast { position: fixed; z-index: 20; left: 50%; bottom: max(var(--s4), env(safe-area-inset-bottom)); max-width: calc(100% - 32px); margin: 0; padding: var(--s2) var(--s4); border-radius: var(--r-pill); background: rgba(23, 8, 32, 0.92); box-shadow: inset 0 0 0 1px var(--rose), var(--glow-rose); color: var(--cream); font-size: var(--fs-s); text-align: center; opacity: 0; transform: translate(-50%, 8px); pointer-events: none; transition: opacity var(--m300) var(--ease-out), transform var(--m300) var(--ease-out); }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     /* ---------- Keyframes ---------- */
     @keyframes wave { 0%, 100% { transform: skewY(0deg) scaleX(1); } 50% { transform: skewY(-4deg) scaleX(0.95); } }
@@ -294,6 +303,8 @@
       .scene-progress { display: block; }
       .scene-pills { top: var(--s1); left: var(--s1); flex-direction: row; flex-wrap: wrap; }
       .pill { padding: 4px 10px; font-size: 13px; }
+      .capsule-row { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: var(--s3); text-align: center; }
+      .envelope { width: min(300px, 85%); }
       .milestone { bottom: 4px; padding: 3px var(--s2); }
       .milestone b { font-size: var(--fs-xs); }
       .milestone small { font-size: 12px; }
@@ -315,8 +326,8 @@
       h1.rise { background: none; color: var(--champagne); }
     }
     @media (prefers-reduced-motion: reduce) {
-      #car, #car.drive, .beam, .lan-body, .lan-glow, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch, .pill, #windows rect, .sign-plaque, .sign .icon, .milestone, .env-flap, .env-seal { transition: none; }
-      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping, .tw, #moonGlow, .lampglow, .cloud, .puff, .lantern .bob, #carIdle, .flick, .digits b.flip, .promise-note::before, .bigcount.pop, .flag, .envelope.nudge, body.midnight .env-seal, .letter { animation: none; }
+      #car, #car.drive, .beam, .lan-body, .lan-glow, .lantern .icon, #walkers, .home-glow, .dawn-sky, .night-only, #sun, #windows, .top, .note, .tick, .tick svg, .swatch, .pill, #windows rect, .sign-plaque, .sign .icon, .milestone, .env-flap, .env-seal, .toast { transition: none; }
+      #car.moving .wheel-spin, .item.just::after, .lantern.pop .ping, .tw, #moonGlow, .lampglow, .cloud, .puff, .lantern .bob, #carIdle, .flick, .digits b.flip, .promise-note::before, .bigcount.pop, .flag, .envelope.nudge, body.midnight .env-seal, .letter, body.ended .note { animation: none; }
       .rise, h1.rise { animation: none; opacity: 1; }
     }
   </style>
@@ -424,8 +435,8 @@
   <div class="strip">
     <div class="wrap">
       <div class="picker">
-        <p>Choose the colour of your Mini</p>
-        <div class="swatches" id="swatches"></div>
+        <p id="pickerLabel">Choose the colour of your Mini</p>
+        <div class="swatches" id="swatches" role="group" aria-labelledby="pickerLabel"></div>
       </div>
       <p class="progress" id="progress" aria-live="polite">0 of 8 wishes come true</p>
     </div>
@@ -444,15 +455,19 @@
         </div>
       </div>
       <section class="capsule" id="capsule" aria-labelledby="capsuleTitle">
-        <h3 id="capsuleTitle">A letter for midnight</h3>
-        <button class="envelope" id="envelope" type="button" aria-describedby="capsuleStatus">
-          <span class="env-back"></span>
-          <span class="env-front"></span>
-          <span class="env-flap"></span>
-          <span class="env-seal" aria-hidden="true">A</span>
-        </button>
-        <p class="capsule-status" id="capsuleStatus">Sealed until midnight on 1 January 2027, Amman time</p>
-        <p class="capsule-msg" id="capsuleMsg" aria-live="polite"></p>
+        <div class="capsule-row">
+          <button class="envelope" id="envelope" type="button" aria-labelledby="capsuleTitle" aria-describedby="capsuleStatus">
+            <span class="env-back"></span>
+            <span class="env-front"></span>
+            <span class="env-flap"></span>
+            <span class="env-seal" aria-hidden="true">A</span>
+          </button>
+          <div class="capsule-text">
+            <h2 class="capsule-title" id="capsuleTitle">A letter for midnight</h2>
+            <p class="capsule-status" id="capsuleStatus">Sealed until midnight on 1 January 2027, Amman time</p>
+            <p class="capsule-msg" id="capsuleMsg" aria-live="polite"></p>
+          </div>
+        </div>
         <article class="letter" id="letter" hidden>
           <p class="salute">My Aya,</p>
           <div id="letterBody"></div>
@@ -476,6 +491,8 @@
   <footer>
     <div class="wrap"><a href="../">Back to Aya's Valentines</a></div>
   </footer>
+
+  <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
   <script>
   {
@@ -516,8 +533,8 @@
     ];
     const signIcons = [
       '<path d="M0 -6 L1.6 -1.6 L6 0 L1.6 1.6 L0 6 L-1.6 1.6 L-6 0 L-1.6 -1.6 Z" fill="currentColor"/>',
-      '<path d="M-8 3 Q-8 0 -5 0 L-3 -4 H3 L5 0 Q8 0 8 3 V5 H-8 Z" fill="currentColor"/>',
-      '<path d="M-4.5 -5 V0.5 A4.5 4.5 0 0 0 4.5 0.5 V-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+      '<path d="M-8 2 Q-8 -1 -5 -1 L-3 -5 H3 L5 -1 Q8 -1 8 2 V4 H-8 Z" fill="currentColor"/><circle cx="-4.5" cy="4.5" r="2.2" style="fill: var(--sign-bg)" stroke="currentColor" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="2.2" style="fill: var(--sign-bg)" stroke="currentColor" stroke-width="1.2"/>',
+      '<path d="M-4.5 -5 V0.5 A4.5 4.5 0 0 0 4.5 0.5 V-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="-4.5" cy="-2.5" r="0.6" style="fill: var(--sign-bg)"/><circle cx="4.5" cy="-2.5" r="0.6" style="fill: var(--sign-bg)"/><circle cx="-3.4" cy="2.9" r="0.6" style="fill: var(--sign-bg)"/><circle cx="3.4" cy="2.9" r="0.6" style="fill: var(--sign-bg)"/>',
       '<path d="M-6 -5 H6 V3 H-1 L-4 6 V3 H-6 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
       '<path d="M0 6 C-8 0 -7 -6 -3 -6 C-1 -6 0 -4 0 -3 C0 -4 1 -6 3 -6 C7 -6 8 0 0 6 Z" fill="currentColor"/>',
       '<circle cy="1.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M-2.2 -4.2 L0 -6.6 L2.2 -4.2 L0 -2.6 Z" fill="currentColor"/>',
@@ -593,9 +610,11 @@
       $("sunDisc").setAttribute("cx", W * 0.46); $("sunDisc").setAttribute("cy", 170);
 
       // ---- Amman at night (starts off-canvas so parallax never shows an edge) ----
-      const S = hx - 40;                       // width of the city before our home
-      const at = (f) => -12 + f * S;            // landmark position as a fraction of the city
-      const lit = (x, y, w, h, extra = "") => `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w}" height="${h}"${extra}/>`;
+      // Landmarks sit in the gaps between lanterns so the lanterns never cover them
+      const LX = wishes.map((_, k) => lanternAt(k)[0]);
+      const gap = (a, b) => (LX[a] + LX[b]) / 2;
+      const fit = Math.min(1, Math.max(0.55, (LX[1] - LX[0]) / 84)); // shrink wide landmarks on phones
+      const lit =(x, y, w, h, extra = "") => `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w}" height="${h}"${extra}/>`;
 
       // 1. The jabals: hills covered in little stone houses, their lights scattered like stars
       const hillY = (x) => 168 - 16 * Math.sin((x / W) * Math.PI * 2.4 + 0.5) - 7 * Math.sin(x / 41 + 1.3);
@@ -615,7 +634,7 @@
       let marks = "", markLights = "";
       // 2. The Citadel: Temple of Hercules columns on their hill, floodlit gold
       {
-        const cx = at(0.12), base = 166;
+        const cx = LX[0] * 0.45, base = 166;
         marks += `<path d="M${cx - 48} 256 Q${cx - 30} ${base - 2} ${cx} ${base - 6} Q${cx + 30} ${base - 2} ${cx + 52} 256 Z" style="fill: #2d1238"/>`;
         markLights += `<circle cx="${cx}" cy="${base - 36}" r="46" fill="url(#lamp)" opacity="0.55"/>`;
         [[-10, 54], [0, 54], [11, 30]].forEach(([dx, h]) => {
@@ -624,26 +643,26 @@
         });
         marks += `<rect x="${cx - 14}" y="${base - 66}" width="18" height="3" style="fill: var(--champagne)" opacity="0.75"/>`;
       }
-      // 3. King Abdullah I Mosque: blue dome between two minarets
+      // 3. King Abdullah I Mosque: blue dome between two minarets (drawn around its base, then scaled to fit)
       {
-        const cx = at(0.31), g = 192;
-        markLights += `<circle cx="${cx}" cy="${g - 20}" r="40" fill="url(#lamp)" opacity="0.4"/>`;
-        marks += `<rect x="${cx - 22}" y="${g}" width="44" height="${256 - g}"/>`;
-        marks += `<rect x="${cx - 12}" y="${g - 9}" width="24" height="9" style="fill: #2a1038"/>`;
-        marks += `<path d="M${cx - 15} ${g - 9} C${cx - 15} ${g - 36} ${cx + 15} ${g - 36} ${cx + 15} ${g - 9} Z" style="fill: #37488a"/>`;
-        marks += `<path d="M${cx - 9} ${g - 26} Q${cx} ${g - 33} ${cx + 9} ${g - 26}" fill="none" style="stroke: var(--champagne)" stroke-opacity="0.45" stroke-width="1.2"/>`;
-        marks += `<rect x="${cx - 0.6}" y="${g - 44}" width="1.2" height="9" style="fill: var(--champagne)"/><circle cx="${cx}" cy="${g - 45}" r="1.6" style="fill: var(--champagne)"/>`;
+        const cx = gap(0, 1), g = 192, down = (256 - g) / fit;
+        markLights += `<circle cx="${cx.toFixed(1)}" cy="${g - 20}" r="${(40 * fit).toFixed(1)}" fill="url(#lamp)" opacity="0.4"/>`;
+        let m = `<rect x="-22" y="0" width="44" height="${down.toFixed(1)}"/>`;
+        m += `<rect x="-12" y="-9" width="24" height="9" style="fill: #2a1038"/>`;
+        m += `<path d="M-15 -9 C-15 -36 15 -36 15 -9 Z" style="fill: #37488a"/>`;
+        m += `<path d="M-9 -26 Q0 -33 9 -26" fill="none" style="stroke: var(--champagne)" stroke-opacity="0.45" stroke-width="1.2"/>`;
+        m += `<rect x="-0.6" y="-44" width="1.2" height="9" style="fill: var(--champagne)"/><circle cy="-45" r="1.6" style="fill: var(--champagne)"/>`;
         [-30, 30].forEach((dx) => {
-          const mx2 = cx + dx;
-          marks += `<rect x="${mx2 - 2}" y="${g - 50}" width="4" height="${256 - g + 50}"/>`;
-          marks += `<rect x="${mx2 - 3.5}" y="${g - 34}" width="7" height="2.2"/>`;
-          marks += `<path d="M${mx2 - 2.4} ${g - 50} L${mx2} ${g - 59} L${mx2 + 2.4} ${g - 50} Z"/>`;
-          markLights += `<circle cx="${mx2}" cy="${g - 36}" r="1.3" style="fill: var(--champagne)"/>`;
+          m += `<rect x="${dx - 2}" y="-50" width="4" height="${(down + 50).toFixed(1)}"/>`;
+          m += `<rect x="${dx - 3.5}" y="-34" width="7" height="2.2"/>`;
+          m += `<path d="M${dx - 2.4} -50 L${dx} -59 L${dx + 2.4} -50 Z"/>`;
+          m += `<circle cx="${dx}" cy="-36" r="1.3" style="fill: var(--champagne)"/>`;
         });
+        marks += `<g transform="translate(${cx.toFixed(1)} ${g}) scale(${fit.toFixed(3)})">${m}</g>`;
       }
       // 4. The Raghadan flagpole: Jordan's flag flying high over the city
       {
-        const px = at(0.47), top = 54;
+        const px = gap(2, 3), top = 54;
         marks += `<rect x="${px - 0.9}" y="${top}" width="1.8" height="${256 - top}" style="fill: #8d7a8a"/>`;
         markLights += `<circle cx="${px + 22}" cy="${top + 11}" r="34" fill="url(#lamp)" opacity="0.35"/>`;
         const star = Array.from({ length: 14 }, (_, i) => {
@@ -657,15 +676,16 @@
       }
       // 5. Jordan Gate: the twin towers
       {
-        const cx = at(0.62);
+        const cx = gap(4, 5), tw = 12 * fit;
         [[-14, 80], [3, 86]].forEach(([dx, top]) => {
-          marks += `<rect x="${cx + dx}" y="${top}" width="12" height="${256 - top}"/><rect x="${cx + dx + 5.4}" y="${top - 8}" width="1.2" height="8"/>`;
-          for (let wy = top + 5; wy < 240; wy += 7) for (let c = 0; c < 3; c += 1) if (rnd() < 0.42) markLights += lit(cx + dx + 2 + c * 3.2, wy, 1.8, 2.4, ' style="fill: var(--champagne)"');
+          const x = cx + dx * fit;
+          marks += `<rect x="${x.toFixed(1)}" y="${top}" width="${tw.toFixed(1)}" height="${256 - top}"/><rect x="${(x + tw / 2 - 0.6).toFixed(1)}" y="${top - 8}" width="1.2" height="8"/>`;
+          for (let wy = top + 5; wy < 240; wy += 7) for (let c = 0; c < 3; c += 1) if (rnd() < 0.42) markLights += lit(x + (2 + c * 3.2) * fit, wy, (1.8 * fit).toFixed(2), 2.4, ' style="fill: var(--champagne)"');
         });
       }
       // 6. Rotana tower: slanted crown and a blinking red light on top
       {
-        const x0 = at(0.8);
+        const x0 = gap(6, 7) - 8;
         marks += `<path d="M${x0} 76 L${x0 + 16} 63 L${x0 + 16} 256 L${x0} 256 Z"/>`;
         for (let wy = 80; wy < 240; wy += 6.5) for (let c = 0; c < 4; c += 1) if (rnd() < 0.38) markLights += lit(x0 + 2 + c * 3.4, wy, 1.8, 2.2, ' style="fill: var(--champagne)"');
         markLights += `<circle class="tw" style="--d:1.6s; fill: #ff4d6d" cx="${x0 + 15}" cy="${61}" r="1.6"/>`;
@@ -703,7 +723,11 @@
       for (let dx = 20; dx < W; dx += 100) d += `<rect x="${dx}" y="276" width="40" height="3" rx="1.5"/>`;
       $("dashes").innerHTML = d;
       let l = "";
-      for (let lx = 90; lx < hx - 40; lx += 210) l += `<circle class="lampglow" style="animation-delay:-${(lx % 7) * 0.6}s" cx="${lx}" cy="206" r="34" fill="url(#lamp)"/><rect x="${lx - 1.5}" y="206" width="3" height="50" style="fill: #2a1230"/><circle cx="${lx}" cy="206" r="4" style="fill: var(--champagne)"/>`;
+      // Street lamps stand under every other lantern, so the road alternates sign, lamp, sign
+      [1, 3, 5].forEach((k, j) => {
+        const lx = LX[k].toFixed(1);
+        l += `<circle class="lampglow" style="animation-delay:-${(j * 1.4).toFixed(1)}s" cx="${lx}" cy="206" r="34" fill="url(#lamp)"/><rect x="${(LX[k] - 1.5).toFixed(1)}" y="206" width="3" height="50" style="fill: #2a1230"/><circle cx="${lx}" cy="206" r="4" style="fill: var(--champagne)"/>`;
+      });
       $("lamps").innerHTML = l;
 
       // A string of lights from the city to our roof; each lantern hangs from it
@@ -736,13 +760,16 @@
         </g></g>`;
       }).join("");
 
+      const ps = W < 1000 ? 0.8 : 1; // smaller plaques on phones, where signs sit closer together
       $("signs").innerHTML = milestones.map((_, i) => {
         const x = carXFor(signPos[i]) + carW / 2;
         return `<g class="sign" id="sign${i}" data-i="${i}" transform="translate(${x.toFixed(1)} 0)">
-          <rect class="sign-hit" x="-20" y="196" width="40" height="62"/>
-          <rect class="sign-post" x="-1.2" y="222" width="2.4" height="34"/>
-          <rect class="sign-plaque" x="-12" y="204" width="24" height="18" rx="3"/>
-          <g class="icon" transform="translate(0 213) scale(0.72)">${signIcons[i]}</g>
+          <rect class="sign-hit" x="-20" y="190" width="40" height="68"/>
+          <rect class="sign-post" x="-1.2" y="${(212 + 10 * ps).toFixed(1)}" width="2.4" height="${(44 - 10 * ps).toFixed(1)}"/>
+          <g transform="translate(0 212) scale(${ps})">
+            <rect class="sign-plaque" x="-14" y="-10" width="28" height="20" rx="3.5"/>
+            <g class="icon" transform="scale(0.88)">${signIcons[i]}</g>
+          </g>
         </g>`;
       }).join("");
       sizeScene();
@@ -861,6 +888,7 @@
       if (!saved.tapped) { saved.tapped = true; save(); $("skyHint").classList.add("gone"); }
     });
     if (saved.tapped || reduce) $("skyHint").hidden = true;
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) $("skyHint").textContent = "Click the sky for fireworks";
 
     // ---------- Wishes ----------
     const tickSvg = '<svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="#2b1036" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -877,7 +905,7 @@
       $("sceneProgress").textContent = n === wishes.length ? "All 8 came true" : `${n} of ${wishes.length}`;
     }
     function finalState() {
-      document.body.classList.add("forever", "dawn");
+      document.body.classList.add("forever", "dawn", "ended");
       walkers.classList.remove("show");
     }
 
@@ -892,11 +920,21 @@
       step(650, () => { walkers.style.transform = `translateX(${doorX - 8}px)`; });
       step(2300, () => { walkers.classList.remove("show"); document.body.classList.add("forever"); });
       step(2500, celebrate);
-      step(6600, () => document.body.classList.add("dawn"));
+      step(6600, () => document.body.classList.add("dawn", "ended"));
       step(7000, () => {
         const note = $("note"), r = note.getBoundingClientRect(), sceneBottom = wrap.getBoundingClientRect().bottom;
         if (r.top < sceneBottom || r.bottom > window.innerHeight) note.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
       });
+    }
+
+    // A gentle, non-blocking reminder of the promise the first time she ticks before midnight
+    let toastTimer = 0, reminded = false;
+    function showToast(text) {
+      const t = $("toast");
+      t.textContent = text;
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove("show"), 3600);
     }
 
     let prevN = 0;
@@ -910,6 +948,10 @@
       if (passed.length) setTimeout(() => showMilestone(passed[passed.length - 1][1]), 300);
       prevN = n;
       syncSigns(n);
+      if (e.target.checked && !isMidnight() && !reminded) {
+        reminded = true;
+        showToast("You promised to wait until midnight, my love.");
+      }
       const row = e.target.closest(".item");
       row.classList.remove("just"); void row.offsetWidth; row.classList.add("just");
       if (e.target.checked) {
@@ -919,7 +961,7 @@
         if (!reduce) setTimeout(() => { fxSize(); const c = rel(car); hearts(c.x, c.y); }, 300);
       }
       if (n === wishes.length) playEnding();
-      else { clearEnding(); document.body.classList.remove("forever", "dawn"); walkers.classList.remove("show"); }
+      else { clearEnding(); document.body.classList.remove("forever", "dawn", "ended"); walkers.classList.remove("show"); }
     });
 
     $("replay").addEventListener("click", () => {
